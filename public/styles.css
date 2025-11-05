@@ -27,6 +27,9 @@
 
   --card-shadow: rgba(0, 0, 0, 0.3);
   --hover-shadow: rgba(0, 0, 0, 0.5);
+  --bg-primary-rgb: 15, 23, 42;
+  --bg-secondary-rgb: 30, 41, 59;
+  --bg-tertiary-rgb: 51, 65, 85;
 }
 
 /* Light Theme */
@@ -53,6 +56,9 @@
 
   --card-shadow: rgba(0, 0, 0, 0.1);
   --hover-shadow: rgba(0, 0, 0, 0.15);
+  --bg-primary-rgb: 248, 250, 252;
+  --bg-secondary-rgb: 255, 255, 255;
+  --bg-tertiary-rgb: 226, 232, 240;
 }
 
 /* Override Tailwind classes with theme variables */
@@ -65,6 +71,10 @@ body {
 .bg-slate-800,
 .bg-slate-900 {
   background-color: var(--bg-secondary) !important;
+}
+
+.bg-slate-950 {
+  background-color: var(--bg-primary) !important;
 }
 
 .bg-slate-700 {
@@ -87,6 +97,11 @@ body {
 
 .border-slate-700,
 .border-slate-600 {
+  border-color: var(--border-primary) !important;
+}
+
+.border-slate-800,
+.border-slate-800\/80 {
   border-color: var(--border-primary) !important;
 }
 
@@ -160,15 +175,100 @@ button:not(.bg-blue-600):not(.bg-red-600):not(.view-btn.active):not(.theme-toggl
 
 /* Tab theming */
 .tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: rgba(15, 23, 42, 0.55);
+  border: 1px solid var(--border-primary) !important;
   color: var(--text-secondary) !important;
+  border-radius: 12px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="light"] .tab-btn {
+  background-color: rgba(226, 232, 240, 0.65);
 }
 
 .tab-btn.active {
+  background-color: rgba(59, 130, 246, 0.18);
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.35);
   color: var(--text-primary) !important;
 }
 
+[data-theme="light"] .tab-btn.active {
+  background-color: rgba(59, 130, 246, 0.24);
+  box-shadow: 0 16px 35px rgba(148, 163, 184, 0.35);
+}
+
 .tab-btn:hover:not(.active) {
+  background-color: rgba(148, 163, 184, 0.18);
   color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .tab-btn:hover:not(.active) {
+  background-color: rgba(148, 163, 184, 0.28);
+}
+
+.tab-btn .tab-icon {
+  background-color: rgba(148, 163, 184, 0.16);
+  color: var(--text-secondary);
+  border-radius: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+[data-theme="light"] .tab-btn .tab-icon {
+  background-color: rgba(148, 163, 184, 0.24);
+}
+
+.tab-btn.active .tab-icon {
+  background-color: rgba(59, 130, 246, 0.28);
+  color: var(--accent-blue);
+}
+
+[data-theme="light"] .tab-btn.active .tab-icon {
+  background-color: rgba(59, 130, 246, 0.22);
+  color: var(--accent-blue);
+}
+
+/* Semi-transparent background overrides */
+.bg-slate-950\/90 {
+  background-color: rgba(var(--bg-primary-rgb), 0.9) !important;
+}
+
+.bg-slate-950\/80 {
+  background-color: rgba(var(--bg-primary-rgb), 0.8) !important;
+}
+
+.bg-slate-950\/70 {
+  background-color: rgba(var(--bg-primary-rgb), 0.7) !important;
+}
+
+.bg-slate-950\/60 {
+  background-color: rgba(var(--bg-primary-rgb), 0.6) !important;
+}
+
+.bg-slate-950\/50 {
+  background-color: rgba(var(--bg-primary-rgb), 0.5) !important;
+}
+
+.bg-slate-950\/40 {
+  background-color: rgba(var(--bg-primary-rgb), 0.4) !important;
+}
+
+.bg-slate-900\/80 {
+  background-color: rgba(var(--bg-secondary-rgb), 0.8) !important;
+}
+
+.bg-slate-900\/70 {
+  background-color: rgba(var(--bg-secondary-rgb), 0.7) !important;
+}
+
+.bg-slate-900\/60 {
+  background-color: rgba(var(--bg-secondary-rgb), 0.6) !important;
+}
+
+.bg-slate-900\/40 {
+  background-color: rgba(var(--bg-secondary-rgb), 0.4) !important;
 }
 
 /* Light theme specific overrides */
@@ -196,7 +296,7 @@ a.hover\:text-blue-400:hover {
 
 /* Uploads grid theming */
 .bg-slate-900 {
-  background-color: var(--bg-primary) !important;
+  background-color: var(--bg-secondary) !important;
 }
 
 /* Ensure checkboxes are visible in light mode */
@@ -792,8 +892,8 @@ select {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #f59e0b;
-  color: white;
+  background: var(--security-icon-bg, #f59e0b);
+  color: var(--security-icon-color, #0f172a);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -7,188 +7,287 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/styles.css">
   <style>
-    /* Custom Tailwind configuration */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
     body {
       font-family: 'Inter', sans-serif;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white" data-theme="dark">
+<body class="min-h-screen bg-slate-950 text-white" data-theme="dark">
 
-  <!-- Security Warning Banner -->
-  <div id="securityBanner" class="security-banner bg-amber-600 text-white py-2 px-4 text-center text-sm">
-    <div class="flex items-center justify-center gap-2">
-      <strong>Security Notice:</strong> This dashboard has no authentication. Use only on private networks.
-      <button id="dismissSecurityBanner" class="security-banner-close ml-2 text-white hover:text-amber-100">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
+  <div class="flex min-h-screen bg-slate-950/90">
+    <!-- Sidebar -->
+    <aside class="hidden lg:flex w-72 flex-col border-r border-slate-800 bg-slate-950/60 backdrop-blur-xl">
+      <div class="px-6 pt-8 pb-6 flex items-center gap-3">
+        <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-500 via-sky-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10a2 2 0 002 2h3m-3-4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2zm5 10l2.293-2.293a1 1 0 011.414 0L15 17"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-xs tracking-widest text-slate-400 uppercase">Tabloo</p>
+          <h1 class="text-xl font-semibold leading-tight">Home-Lab Dashboard</h1>
+        </div>
+      </div>
+
+      <nav class="flex-1 px-4 space-y-6 text-sm">
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase text-slate-500 mb-2">Navigation</p>
+          <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-900/70 border border-slate-800 text-white shadow-inner shadow-slate-900/60">
+            <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l9-5 9 5-9 5-9-5zm18 4l-9 5-9-5m9 5v5"></path>
+            </svg>
+            Overview
+          </a>
+          <button id="sidebarQuickAdd" class="mt-2 w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-800 bg-slate-900/40 hover:bg-slate-900/70 transition-colors">
+            <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Quick Add
+          </button>
+        </div>
+
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase text-slate-500 mb-2">Shortcuts</p>
+          <a href="/admin" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-800 hover:bg-slate-900/70 transition-colors">
+            <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+              <circle cx="12" cy="7" r="4" stroke-width="1.5"></circle>
+            </svg>
+            Admin Panel
+          </a>
+          <a href="#pinned" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-800 hover:bg-slate-900/70 transition-colors">
+            <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6l-6 6h12l-6 6"></path>
+            </svg>
+            Pinned Apps
+          </a>
+          <a href="#apps" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-800 hover:bg-slate-900/70 transition-colors">
+            <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h10M4 18h7"></path>
+            </svg>
+            All Applications
+          </a>
+        </div>
+
+        <div class="mt-auto mb-6 px-3 py-4 rounded-xl border border-slate-800 bg-slate-900/40 text-xs text-slate-400 space-y-2">
+          <p class="text-slate-300 font-medium">Security Reminder</p>
+          <p>Run Tabloo on trusted networks only. Add auth in front if you expose it publicly.</p>
+          <p class="text-slate-500">Contact admin team to discuss reverse proxy hardening.</p>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Security Banner -->
+      <div id="securityBanner" class="security-banner bg-amber-500/90 text-slate-950 py-3 px-6 text-sm flex items-center justify-center gap-2">
+        <strong class="font-semibold tracking-wide uppercase">Security Notice:</strong>
+        This dashboard has no authentication. Use only on private networks.
+        <button id="dismissSecurityBanner" class="security-banner-close ml-4 text-slate-950/70 hover:text-slate-950">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Top Bar -->
+      <div class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/70 backdrop-blur supports-[backdrop-filter]:bg-slate-950/60">
+        <div class="mx-auto w-full max-w-7xl px-6 py-6 flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/70 px-3 py-1 text-xs font-medium text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Self-hosted services overview
+            </div>
+            <div>
+              <h2 class="text-3xl font-semibold tracking-tight text-white">Dashboard</h2>
+              <p class="text-sm text-slate-400">Discover, filter, and launch the apps running across your lab.</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 self-start xl:self-auto">
+            <button id="themeToggle" class="theme-toggle" title="Toggle theme">
+              <svg id="sunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+              </svg>
+              <svg id="moonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+              </svg>
+            </button>
+            <a href="/admin" class="inline-flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
+              <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Admin
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <main class="flex-1 overflow-y-auto">
+        <div class="mx-auto w-full max-w-7xl px-6 py-10 space-y-8">
+
+          <!-- Filters & View Controls -->
+          <section class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-slate-950/40 backdrop-blur">
+            <div class="p-6 lg:p-8 space-y-6">
+              <div class="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
+                <!-- Search -->
+                <div class="w-full xl:max-w-md">
+                  <label for="searchInput" class="block text-sm font-medium text-slate-300 mb-2">Search applications</label>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      id="searchInput"
+                      placeholder="Filter by name, tag, or description"
+                      class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 pl-11 text-sm shadow-inner shadow-slate-950/60 transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60"
+                    >
+                    <svg class="absolute left-3 top-3.5 h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- View Buttons -->
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500 w-full sm:w-auto">Layout</span>
+                  <div class="inline-flex rounded-xl border border-slate-800 bg-slate-950/60 p-1 shadow-inner shadow-slate-950/60">
+                    <button class="view-btn active inline-flex h-10 w-10 items-center justify-center rounded-lg transition" data-view="grid" title="Grid View">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                      </svg>
+                    </button>
+                    <button class="view-btn inline-flex h-10 w-10 items-center justify-center rounded-lg transition" data-view="comfortable" title="Comfortable View">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                      </svg>
+                    </button>
+                    <button class="view-btn inline-flex h-10 w-10 items-center justify-center rounded-lg transition" data-view="compact" title="Compact Grid">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 3h4v4H3V3zm0 5h4v4H3V8zm0 5h4v4H3v-4zm5-10h4v4H8V3zm0 5h4v4H8V8zm0 5h4v4H8v-4zm5-10h4v4h-4V3zm0 5h4v4h-4V8zm0 5h4v4h-4v-4z"></path>
+                      </svg>
+                    </button>
+                    <button class="view-btn inline-flex h-10 w-10 items-center justify-center rounded-lg transition" data-view="list" title="List View">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                      </svg>
+                    </button>
+                    <button class="view-btn inline-flex h-10 w-10 items-center justify-center rounded-lg transition" data-view="table" title="Table View">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div class="flex flex-col gap-2">
+                  <label for="sortSelect" class="text-sm font-medium text-slate-300">Sort</label>
+                  <select id="sortSelect" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-sm shadow-inner shadow-slate-950/60 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
+                    <option value="pinned">Pinned First</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="date">Date Added</option>
+                    <option value="tag">Tag</option>
+                  </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="tagFilter" class="text-sm font-medium text-slate-300">Tag</label>
+                  <select id="tagFilter" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-sm shadow-inner shadow-slate-950/60 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
+                    <option value="">All Tags</option>
+                  </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label for="sectionFilter" class="text-sm font-medium text-slate-300">Section</label>
+                  <select id="sectionFilter" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-sm shadow-inner shadow-slate-950/60 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
+                    <option value="">All Sections</option>
+                  </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <span class="text-sm font-medium text-slate-300">Need to add something?</span>
+                  <button id="controlsQuickAdd" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-3 py-3 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
+                    <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Quick Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Apps -->
+          <section id="apps" class="space-y-8">
+            <div id="appsContainer" class="grid gap-6">
+              <!-- Apps populated by dashboard.js -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden rounded-2xl border border-slate-800 bg-slate-950/70 py-16 text-center shadow-lg shadow-slate-950/30">
+              <svg class="w-24 h-24 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+              </svg>
+              <h3 class="text-2xl font-semibold text-white mb-2">No apps found</h3>
+              <p class="text-slate-400 mb-6">Start by adding your first home-lab application.</p>
+              <a href="/admin" class="inline-flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
+                Open Admin Panel
+              </a>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-16">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500 mx-auto"></div>
+              <p class="text-slate-400 mt-4">Loading apps...</p>
+            </div>
+          </section>
+        </div>
+      </main>
     </div>
   </div>
 
-  <!-- Security Info Icon (shows when banner is dismissed) -->
+  <!-- Security Info Icon -->
   <div id="securityInfoIcon" class="security-info-icon hidden" title="Security Notice">
     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
       <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
     </svg>
   </div>
 
-  <!-- Header -->
-  <header class="container mx-auto px-4 py-8">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div>
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Tabloo Dash
-        </h1>
-        <p class="text-slate-400 mt-2">Manage and access your self-hosted services</p>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button id="themeToggle" class="theme-toggle" title="Toggle theme">
-          <svg id="sunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-          </svg>
-          <svg id="moonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-          </svg>
-        </button>
-        <a href="/admin" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors text-sm font-medium">
-          Admin Panel
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 pb-12">
-
-    <!-- Controls Bar -->
-    <div class="bg-slate-800 rounded-xl shadow-2xl p-6 mb-8 border border-slate-700">
-      <div class="flex flex-col lg:flex-row gap-4">
-
-        <!-- Search -->
-        <div class="flex-1">
-          <div class="relative">
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Search apps..."
-              class="w-full px-4 py-3 pl-10 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all"
-            >
-            <svg class="absolute left-3 top-3.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </div>
+  <!-- Quick Add Modal -->
+  <div id="quickAddModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-xl rounded-2xl border border-slate-800 bg-slate-950/90 p-6 shadow-2xl shadow-slate-950/60">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <p class="text-xs uppercase tracking-wide text-slate-500">Create</p>
+          <h3 class="text-2xl font-semibold text-white">Quick Add App</h3>
         </div>
-
-        <!-- View Mode -->
-        <div class="flex items-center gap-1 bg-slate-900 rounded-lg p-1 flex-wrap">
-          <button class="view-btn active px-3 py-2 rounded-md transition-colors text-sm font-medium" data-view="grid" title="Grid View">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-            </svg>
-          </button>
-          <button class="view-btn px-3 py-2 rounded-md transition-colors text-sm font-medium" data-view="comfortable" title="Comfortable View">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
-            </svg>
-          </button>
-          <button class="view-btn px-3 py-2 rounded-md transition-colors text-sm font-medium" data-view="compact" title="Compact Grid">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 3h4v4H3V3zm0 5h4v4H3V8zm0 5h4v4H3v-4zm5-10h4v4H8V3zm0 5h4v4H8V8zm0 5h4v4H8v-4zm5-10h4v4h-4V3zm0 5h4v4h-4V8zm0 5h4v4h-4v-4z"></path>
-            </svg>
-          </button>
-          <button class="view-btn px-3 py-2 rounded-md transition-colors text-sm font-medium" data-view="list" title="List View">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-            </svg>
-          </button>
-          <button class="view-btn px-3 py-2 rounded-md transition-colors text-sm font-medium" data-view="table" title="Table View">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Sort -->
-        <select id="sortSelect" class="px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all">
-          <option value="pinned">Pinned First</option>
-          <option value="name">Name (A-Z)</option>
-          <option value="date">Date Added</option>
-          <option value="tag">Tag</option>
-        </select>
-
-        <!-- Tag Filter -->
-        <select id="tagFilter" class="px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all">
-          <option value="">All Tags</option>
-        </select>
-
-        <!-- Section Filter -->
-        <select id="sectionFilter" class="px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all">
-          <option value="">All Sections</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Apps Container -->
-    <div id="appsContainer" class="grid gap-6">
-      <!-- Apps will be dynamically loaded here -->
-    </div>
-
-    <!-- Empty State -->
-    <div id="emptyState" class="hidden text-center py-16">
-      <svg class="w-24 h-24 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-      </svg>
-      <h3 class="text-xl font-semibold text-slate-300 mb-2">No apps found</h3>
-      <p class="text-slate-400 mb-6">Start by adding your first home-lab application</p>
-      <a href="/admin" class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium">
-        Go to Admin Panel
-      </a>
-    </div>
-
-    <!-- Loading State -->
-    <div id="loadingState" class="text-center py-16">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-      <p class="text-slate-400 mt-4">Loading apps...</p>
-    </div>
-  </main>
-
-  <!-- Quick Add Modal (accessible from dashboard) -->
-  <div id="quickAddModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-800 rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-700">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xl font-bold">Quick Add App</h3>
-        <button id="closeQuickAdd" class="text-slate-400 hover:text-white transition-colors">
+        <button id="closeQuickAdd" class="text-slate-500 hover:text-white transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
-      <form id="quickAddForm" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium mb-2">Name *</label>
-          <input type="text" name="name" required class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+
+      <form id="quickAddForm" class="grid gap-4">
+        <div class="grid gap-2">
+          <label class="text-sm font-medium text-slate-300">Name *</label>
+          <input type="text" name="name" required class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
         </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">URL *</label>
-          <input type="url" name="url" required placeholder="http://" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        <div class="grid gap-2">
+          <label class="text-sm font-medium text-slate-300">URL *</label>
+          <input type="url" name="url" required placeholder="http://" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
         </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">Description</label>
-          <input type="text" name="description" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        <div class="grid gap-2">
+          <label class="text-sm font-medium text-slate-300">Description</label>
+          <input type="text" name="description" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
         </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium mb-2">Tag</label>
-            <input type="text" name="tag" placeholder="e.g., DNS, Media" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid gap-2">
+            <label class="text-sm font-medium text-slate-300">Tag</label>
+            <input type="text" name="tag" placeholder="e.g., DNS, Media" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
           </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">Section</label>
-            <input type="text" name="section" placeholder="e.g., Network, Storage" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" list="sectionSuggestions">
+          <div class="grid gap-2">
+            <label class="text-sm font-medium text-slate-300">Section</label>
+            <input type="text" name="section" placeholder="e.g., Network, Storage" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60" list="sectionSuggestions">
             <datalist id="sectionSuggestions">
               <option value="Media">
               <option value="Network">
@@ -198,9 +297,9 @@
             </datalist>
           </div>
         </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">Icon</label>
-          <div class="flex items-center gap-4">
+        <div class="grid gap-2">
+          <label class="text-sm font-medium text-slate-300">Icon</label>
+          <div class="flex flex-wrap items-center gap-4">
             <div id="quickAddIconPreview" class="upload-preview hidden">
               <img id="quickAddIconPreviewImg" src="" alt="Preview">
               <button type="button" id="quickAddRemoveIcon" class="upload-preview-remove">
@@ -209,8 +308,8 @@
                 </svg>
               </button>
             </div>
-            <label class="file-upload-btn px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors cursor-pointer text-sm font-medium">
-              <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <label class="file-upload-btn inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-sm font-medium cursor-pointer hover:bg-slate-900/80 transition-colors">
+              <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
               </svg>
               Browse or Drop
@@ -219,11 +318,11 @@
           </div>
           <input type="hidden" name="icon" id="quickAddIconPath">
         </div>
-        <div class="flex gap-3 pt-4">
-          <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
+          <button type="submit" class="flex-1 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/40 hover:from-sky-400 hover:to-indigo-500 transition-colors">
             Add App
           </button>
-          <button type="button" id="cancelQuickAdd" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors font-medium">
+          <button type="button" id="cancelQuickAdd" class="rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-3 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
             Cancel
           </button>
         </div>
@@ -232,12 +331,17 @@
   </div>
 
   <!-- Floating Action Button -->
-  <button id="fabQuickAdd" class="fixed bottom-8 right-8 w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-40">
+  <button id="fabQuickAdd" class="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 shadow-2xl shadow-sky-500/40 hover:from-sky-400 hover:to-indigo-500 transition-transform hover:scale-105 z-40 flex items-center justify-center">
     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
     </svg>
   </button>
 
+  <!-- Script -->
+  <script>
+    document.getElementById('sidebarQuickAdd')?.addEventListener('click', () => document.getElementById('fabQuickAdd').click());
+    document.getElementById('controlsQuickAdd')?.addEventListener('click', () => document.getElementById('fabQuickAdd').click());
+  </script>
   <script src="/dashboard.js"></script>
 </body>
 </html>

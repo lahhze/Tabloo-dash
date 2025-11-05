@@ -13,141 +13,207 @@
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white" data-theme="dark">
+<body class="min-h-screen bg-slate-950 text-white" data-theme="dark">
 
-  <!-- Security Warning Banner -->
-  <div id="adminSecurityBanner" class="security-banner bg-red-600 text-white py-2 px-4 text-center text-sm font-medium">
-    <div class="flex items-center justify-center gap-2">
-      ADMIN PANEL - NO AUTHENTICATION - PRIVATE NETWORK ONLY
-      <button id="dismissAdminSecurityBanner" class="security-banner-close ml-2 text-white hover:text-red-100">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Security Info Icon (shows when banner is dismissed) -->
-  <div id="adminSecurityInfoIcon" class="security-info-icon hidden" style="background: #dc2626;" title="Security Notice">
-    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-    </svg>
-  </div>
-
-  <!-- Header -->
-  <header class="container mx-auto px-4 py-8">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div>
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Admin Panel
-        </h1>
-        <p class="text-slate-400 mt-2">Manage your home-lab applications</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <button id="adminThemeToggle" class="theme-toggle" title="Toggle theme">
-          <svg id="adminSunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+  <div class="flex min-h-screen bg-slate-950/90">
+    <!-- Sidebar -->
+    <aside class="hidden lg:flex w-72 flex-col border-r border-slate-800 bg-slate-950/60 backdrop-blur-xl">
+      <div class="px-6 pt-8 pb-6 flex items-center gap-3">
+        <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-rose-500 via-fuchsia-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-rose-500/40">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <svg id="adminMoonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-          </svg>
-        </button>
-        <a href="/" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors text-sm font-medium">
-          View Dashboard
-        </a>
+        </div>
+        <div>
+          <p class="text-xs tracking-widest text-slate-400 uppercase">Tabloo Admin</p>
+          <h1 class="text-xl font-semibold leading-tight">Control Center</h1>
+        </div>
       </div>
-    </div>
-  </header>
 
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 pb-12">
-
-    <!-- Tabs -->
-    <div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 mb-8">
-      <div class="flex border-b border-slate-700">
-        <button class="tab-btn active px-6 py-4 font-medium transition-colors" data-tab="apps">
-          Applications
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium transition-colors" data-tab="uploads">
-          Upload Manager
-        </button>
-        <button class="tab-btn px-6 py-4 font-medium transition-colors" data-tab="bulk">
-          Bulk Add
-        </button>
-      </div>
-    </div>
-
-    <!-- Applications Tab -->
-    <div id="appsTab" class="tab-content">
-      <div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-6 mb-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h2 class="text-2xl font-bold">Manage Applications</h2>
-          <button id="addAppBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium">
-            Add New App
+      <nav class="flex-1 px-4 space-y-6 text-sm">
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase text-slate-500 mb-2">Admin Modules</p>
+          <button type="button" class="tab-btn active group flex w-full items-center gap-3 rounded-lg border border-slate-800 px-3 py-2 text-left text-slate-300 transition-colors" data-tab="apps">
+            <span class="tab-icon flex h-8 w-8 items-center justify-center rounded-md bg-slate-900/40 transition-colors">
+              <svg class="w-4 h-4 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 9h6m-6 4h6m-7 4h8a2 2 0 002-2V7a2 2 0 00-2-2h-4l-2-2H8a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </span>
+            Applications
+          </button>
+          <button type="button" class="tab-btn group flex w-full items-center gap-3 rounded-lg border border-slate-800 px-3 py-2 text-left text-slate-300 transition-colors" data-tab="uploads">
+            <span class="tab-icon flex h-8 w-8 items-center justify-center rounded-md bg-slate-900/40 transition-colors">
+              <svg class="w-4 h-4 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </span>
+            Upload Manager
+          </button>
+          <button type="button" class="tab-btn group flex w-full items-center gap-3 rounded-lg border border-slate-800 px-3 py-2 text-left text-slate-300 transition-colors" data-tab="bulk">
+            <span class="tab-icon flex h-8 w-8 items-center justify-center rounded-md bg-slate-900/40 transition-colors">
+              <svg class="w-4 h-4 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .672-3 1.5S10.343 11 12 11s3 .672 3 1.5S13.657 14 12 14s-3-.672-3-1.5M5 9.5c0 1.38 2.239 2.5 5 2.5s5-1.12 5-2.5M5 13.5c0 1.38 2.239 2.5 5 2.5s5-1.12 5-2.5M5 17.5c0 1.38 2.239 2.5 5 2.5s5-1.12 5-2.5M5 5.5C5 6.88 7.239 8 10 8s5-1.12 5-2.5S12.761 3 10 3 5 4.12 5 5.5z"></path>
+              </svg>
+            </span>
+            Bulk Add
           </button>
         </div>
 
-        <!-- Apps Table -->
-        <div class="overflow-x-auto">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>URL</th>
-                <th class="hidden md:table-cell">Section</th>
-                <th class="hidden md:table-cell">Tag</th>
-                <th class="hidden lg:table-cell">Created</th>
-                <th>Pinned</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="appsTableBody">
-              <tr>
-                <td colspan="6" class="text-center py-8 text-slate-400">
-                  <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-                  <p class="mt-4">Loading apps...</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div>
+          <p class="px-3 text-xs font-semibold uppercase text-slate-500 mb-2">Shortcuts</p>
+          <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-800 bg-slate-900/40 hover:bg-slate-900/70 transition-colors">
+            <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l9-9 9 9m-3-3v9a2 2 0 01-2 2h-2M9 22V12H5v10h4z"></path>
+            </svg>
+            View Dashboard
+          </a>
         </div>
-      </div>
-    </div>
 
-    <!-- Uploads Tab -->
-    <div id="uploadsTab" class="tab-content hidden">
-      <div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-6 mb-6">
-        <h2 class="text-2xl font-bold mb-6">Upload Manager</h2>
+        <div class="mt-auto mb-6 px-3 py-4 rounded-xl border border-slate-800 bg-slate-900/40 text-xs text-slate-400 space-y-2">
+          <p class="text-slate-300 font-medium">Security Reminder</p>
+          <p>This interface has no auth. Restrict access to trusted subnets only.</p>
+          <p class="text-slate-500">Log every destructive change in your PR notes.</p>
+        </div>
+      </nav>
+    </aside>
 
-        <!-- Upload Area -->
-        <div id="uploadArea" class="upload-area mb-8">
-          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml" multiple class="hidden">
-          <svg class="w-16 h-16 mx-auto text-slate-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+    <!-- Content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Security Banner -->
+      <div id="adminSecurityBanner" class="security-banner bg-rose-500/90 text-slate-950 py-3 px-6 text-sm font-medium flex items-center justify-center gap-2">
+        ADMIN PANEL - NO AUTHENTICATION - PRIVATE NETWORK ONLY
+        <button id="dismissAdminSecurityBanner" class="security-banner-close ml-4 text-slate-950/70 hover:text-slate-950">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
-          <p class="text-lg font-medium mb-2">Click to upload or drag and drop</p>
-          <p class="text-sm text-slate-400">PNG, JPG, WebP, SVG (max 8 MB)</p>
-        </div>
+        </button>
+      </div>
 
-        <!-- Recent Uploads -->
-        <h3 class="text-xl font-semibold mb-4">Recent Uploads</h3>
-        <div id="uploadsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <div class="col-span-full text-center py-8 text-slate-400">
-            <p>Loading uploads...</p>
+      <!-- Top Bar -->
+      <div class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/70 backdrop-blur supports-[backdrop-filter]:bg-slate-950/60">
+        <div class="mx-auto w-full max-w-7xl px-6 py-6 flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/70 px-3 py-1 text-xs font-medium text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+              Live admin environment
+            </div>
+            <div>
+              <h2 class="text-3xl font-semibold tracking-tight text-white">Admin Panel</h2>
+              <p class="text-sm text-slate-400">Curate metadata, manage uploads, and seed new applications.</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 self-start xl:self-auto">
+            <button id="adminThemeToggle" class="theme-toggle" title="Toggle theme">
+              <svg id="adminSunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+              </svg>
+              <svg id="adminMoonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+              </svg>
+            </button>
+            <a href="/" class="inline-flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
+              <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l9-9 9 9m-3-3v9a2 2 0 01-2 2h-2M9 22V12H5v10h4z"></path>
+              </svg>
+              Dashboard
+            </a>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Bulk Add Tab -->
-    <div id="bulkTab" class="tab-content hidden">
-      <div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-6">
-        <h2 class="text-2xl font-bold mb-4">Bulk Add Applications</h2>
-        <p class="text-slate-400 mb-6">Paste a JSON array of applications to add multiple apps at once.</p>
+      <!-- Main -->
+      <main class="flex-1 overflow-y-auto">
+        <div class="mx-auto w-full max-w-7xl px-6 py-10 space-y-8">
 
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2">JSON Array</label>
-          <textarea id="bulkJsonInput" rows="12" class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" placeholder='[
+          <!-- Applications Tab -->
+          <section id="appsTab" class="tab-content space-y-6">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-slate-950/40 backdrop-blur">
+              <div class="flex flex-col gap-4 p-6 lg:p-8 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h3 class="text-2xl font-semibold text-white">Manage Applications</h3>
+                  <p class="text-sm text-slate-400">Edit metadata, toggle pinning, and keep your catalogue tidy.</p>
+                </div>
+                <button id="addAppBtn" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/40 hover:from-sky-400 hover:to-indigo-500 transition-colors">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  Add New App
+                </button>
+              </div>
+
+              <div class="px-4 pb-6 lg:px-8">
+                <div class="overflow-hidden rounded-xl border border-slate-800/80 bg-slate-950/50">
+                  <div class="overflow-x-auto">
+                    <table class="admin-table w-full text-sm">
+                      <thead class="bg-slate-950/70">
+                        <tr>
+                          <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide text-slate-400">Name</th>
+                          <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide text-slate-400">URL</th>
+                          <th class="hidden md:table-cell px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide text-slate-400">Section</th>
+                          <th class="hidden md:table-cell px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide text-slate-400">Tag</th>
+                          <th class="hidden lg:table-cell px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide text-slate-400">Created</th>
+                          <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide text-slate-400">Pinned</th>
+                          <th class="px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide text-slate-400">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="appsTableBody">
+                        <tr>
+                          <td colspan="6" class="text-center py-8 text-slate-400">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500 mx-auto mb-4"></div>
+                            <p>Loading apps...</p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Uploads Tab -->
+          <section id="uploadsTab" class="tab-content hidden space-y-6">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-slate-950/40 backdrop-blur">
+              <div class="p-6 lg:p-8 space-y-6">
+                <div>
+                  <h3 class="text-2xl font-semibold text-white">Upload Manager</h3>
+                  <p class="text-sm text-slate-400">Store icons and artwork that your dashboards can reuse.</p>
+                </div>
+
+                <div id="uploadArea" class="upload-area flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-800/80 bg-slate-950/40 py-12 text-center text-slate-400 transition hover:border-sky-500/70 hover:text-slate-200">
+                  <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml" multiple class="hidden">
+                  <svg class="w-16 h-16 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                  </svg>
+                  <p class="text-lg font-medium">Click to upload or drag and drop</p>
+                  <p class="text-xs text-slate-500 uppercase tracking-wide">PNG, JPG, WebP, SVG (max 8 MB)</p>
+                </div>
+
+                <div>
+                  <h4 class="text-lg font-semibold text-white mb-4">Recent Uploads</h4>
+                  <div id="uploadsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <div class="col-span-full text-center py-8 text-slate-400">
+                      <p>Loading uploads...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Bulk Tab -->
+          <section id="bulkTab" class="tab-content hidden space-y-6">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-slate-950/40 backdrop-blur">
+              <div class="p-6 lg:p-8 space-y-6">
+                <div>
+                  <h3 class="text-2xl font-semibold text-white">Bulk Add Applications</h3>
+                  <p class="text-sm text-slate-400">Paste a JSON array to import many services at once.</p>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="block text-sm font-medium text-slate-300">JSON Array</label>
+                  <textarea id="bulkJsonInput" rows="12" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 font-mono text-sm text-white focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60" placeholder='[
   {
     "name": "App Name",
     "url": "http://192.168.1.10:8080",
@@ -158,57 +224,71 @@
     "is_pinned": 0
   }
 ]'></textarea>
-        </div>
+                </div>
 
-        <div class="flex gap-3">
-          <button id="bulkAddBtn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium">
-            Import Apps
-          </button>
-          <button id="bulkValidateBtn" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors font-medium">
-            Validate JSON
-          </button>
-        </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <button id="bulkAddBtn" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/40 hover:from-sky-400 hover:to-indigo-500 transition-colors">
+                    Import Apps
+                  </button>
+                  <button id="bulkValidateBtn" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
+                    Validate JSON
+                  </button>
+                </div>
 
-        <div id="bulkResults" class="mt-6 hidden">
-          <h3 class="text-lg font-semibold mb-3">Import Results</h3>
-          <div id="bulkResultsContent" class="bg-slate-900 rounded-lg p-4 border border-slate-700"></div>
+                <div id="bulkResults" class="hidden">
+                  <h4 class="text-lg font-semibold text-white mb-3">Import Results</h4>
+                  <div id="bulkResultsContent" class="rounded-xl border border-slate-800 bg-slate-950/60 p-4 text-sm"></div>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
-      </div>
+      </main>
     </div>
+  </div>
 
-  </main>
+  <!-- Security Info Icon -->
+  <div id="adminSecurityInfoIcon" class="security-info-icon hidden" style="--security-icon-bg:#f43f5e; --security-icon-color:#0f172a;" title="Security Notice">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+    </svg>
+  </div>
 
   <!-- Edit App Modal -->
-  <div id="editAppModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full p-6 border border-slate-700 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-2xl font-bold" id="editModalTitle">Edit Application</h3>
-        <button id="closeEditModal" class="text-slate-400 hover:text-white transition-colors">
+  <div id="editAppModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-950/90 rounded-2xl border border-slate-800 max-w-2xl w-full p-6 md:p-8 shadow-2xl shadow-slate-950/60 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <p class="text-xs uppercase tracking-wide text-slate-500">Application</p>
+          <h3 class="text-2xl font-semibold text-white" id="editModalTitle">Edit Application</h3>
+        </div>
+        <button id="closeEditModal" class="text-slate-500 hover:text-white transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
+
       <form id="editAppForm" class="space-y-4">
         <input type="hidden" id="editAppId">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-2">Name *</label>
-            <input type="text" id="editName" required class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <label class="block text-sm font-medium text-slate-300 mb-2">Name *</label>
+            <input type="text" id="editName" required class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
           </div>
           <div>
-            <label class="block text-sm font-medium mb-2">URL *</label>
-            <input type="url" id="editUrl" required placeholder="http://" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <label class="block text-sm font-medium text-slate-300 mb-2">URL *</label>
+            <input type="url" id="editUrl" required placeholder="http://" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
           </div>
         </div>
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-2">IP Address</label>
-            <input type="text" id="editIp" placeholder="192.168.1.10" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <label class="block text-sm font-medium text-slate-300 mb-2">IP Address</label>
+            <input type="text" id="editIp" placeholder="192.168.1.10" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
           </div>
           <div>
-            <label class="block text-sm font-medium mb-2">Section</label>
-            <input type="text" id="editSection" placeholder="e.g., Network, Storage" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" list="editSectionSuggestions">
+            <label class="block text-sm font-medium text-slate-300 mb-2">Section</label>
+            <input type="text" id="editSection" placeholder="e.g., Network, Storage" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60" list="editSectionSuggestions">
             <datalist id="editSectionSuggestions">
               <option value="Media">
               <option value="Network">
@@ -219,16 +299,16 @@
           </div>
         </div>
         <div>
-          <label class="block text-sm font-medium mb-2">Tag</label>
-          <input type="text" id="editTag" placeholder="e.g., DNS, Media" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+          <label class="block text-sm font-medium text-slate-300 mb-2">Tag</label>
+          <input type="text" id="editTag" placeholder="e.g., DNS, Media" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
         </div>
         <div>
-          <label class="block text-sm font-medium mb-2">Description</label>
-          <textarea id="editDescription" rows="3" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"></textarea>
+          <label class="block text-sm font-medium text-slate-300 mb-2">Description</label>
+          <textarea id="editDescription" rows="3" class="w-full rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60"></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium mb-2">Icon</label>
-          <div class="flex items-center gap-4">
+          <label class="block text-sm font-medium text-slate-300 mb-2">Icon</label>
+          <div class="flex items-center gap-4 flex-wrap">
             <div id="editIconPreview" class="upload-preview hidden">
               <img id="editIconPreviewImg" src="" alt="Preview">
               <button type="button" id="editRemoveIcon" class="upload-preview-remove">
@@ -237,8 +317,8 @@
                 </svg>
               </button>
             </div>
-            <label class="file-upload-btn px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors cursor-pointer text-sm font-medium">
-              <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <label class="file-upload-btn inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-sm font-medium cursor-pointer hover:bg-slate-900/80 transition-colors">
+              <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
               </svg>
               Browse or Drop
@@ -246,17 +326,17 @@
             </label>
           </div>
           <input type="hidden" id="editIcon">
-          <p class="text-xs text-slate-400 mt-1">Upload a new icon or use existing from Upload Manager</p>
+          <p class="text-xs text-slate-500 mt-1">Upload a new icon or reuse an existing asset from Upload Manager.</p>
         </div>
         <div class="flex items-center">
-          <input type="checkbox" id="editPinned" class="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 rounded focus:ring-blue-500 focus:ring-2">
-          <label for="editPinned" class="ml-2 text-sm font-medium">Pin to top</label>
+          <input type="checkbox" id="editPinned" class="w-4 h-4 text-sky-500 bg-slate-900 border-slate-700 rounded focus:ring-sky-500 focus:ring-2">
+          <label for="editPinned" class="ml-2 text-sm font-medium text-slate-300">Pin to top</label>
         </div>
-        <div class="flex gap-3 pt-4">
-          <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium">
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button type="submit" class="flex-1 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/40 hover:from-sky-400 hover:to-indigo-500 transition-colors">
             Save Changes
           </button>
-          <button type="button" id="cancelEdit" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors font-medium">
+          <button type="button" id="cancelEdit" class="rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-3 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
             Cancel
           </button>
         </div>
@@ -265,15 +345,15 @@
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-800 rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-700">
-      <h3 class="text-xl font-bold mb-4">Confirm Deletion</h3>
+  <div id="deleteModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-950/90 rounded-2xl border border-slate-800 max-w-md w-full p-6 shadow-2xl shadow-slate-950/60">
+      <h3 class="text-xl font-semibold text-white mb-4">Confirm Deletion</h3>
       <p class="text-slate-300 mb-6">Are you sure you want to delete this application? This action cannot be undone.</p>
-      <div class="flex gap-3">
-        <button id="confirmDelete" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors font-medium">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button id="confirmDelete" class="flex-1 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-500/40 hover:from-rose-400 hover:to-red-500 transition-colors">
           Delete
         </button>
-        <button id="cancelDelete" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors font-medium">
+        <button id="cancelDelete" class="rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-3 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
           Cancel
         </button>
       </div>
