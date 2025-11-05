@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 lahhze
+Copyright (c) 2024 Home-Lab Dashboard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+SECURITY DISCLAIMER:
+This software includes no authentication or authorization mechanisms. It is
+designed for use on private networks only. The authors and contributors are
+not responsible for any unauthorized access, data breaches, or security
+incidents that may occur from improper deployment of this software. Users
+are solely responsible for implementing appropriate security measures for
+their deployment environment.

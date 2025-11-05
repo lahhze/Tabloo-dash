@@ -1,0 +1,28 @@
+[Unit]
+Description=Home-Lab Dashboard
+Documentation=https://github.com/yourusername/homelab-dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/homelab-dashboard
+Environment="NODE_ENV=production"
+EnvironmentFile=/opt/homelab-dashboard/.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=homelab-dashboard
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/homelab-dashboard/db /opt/homelab-dashboard/public/uploads
+
+[Install]
+WantedBy=multi-user.target
