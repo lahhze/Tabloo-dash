@@ -38,9 +38,11 @@ const tabContents = document.querySelectorAll('.tab-content');
 async function init() {
   initTheme();
   initSecurityBanner();
+  initSidebar();
   setupEventListeners();
   await loadApps();
   await loadUploads();
+  await loadWidgetSettings();
 }
 
 /**
@@ -86,6 +88,47 @@ function initSecurityBanner() {
   if (dismissed) {
     adminSecurityBanner.classList.add('hidden');
     adminSecurityInfoIcon.classList.remove('hidden');
+  }
+}
+
+/**
+ * Initialize sidebar state
+ */
+function initSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+
+  if (!sidebar || !sidebarToggle) return;
+
+  // Get saved state from localStorage (default to closed/collapsed)
+  const sidebarState = localStorage.getItem('sidebar-state') || 'collapsed';
+
+  if (sidebarState === 'open') {
+    sidebar.classList.remove('sidebar-collapsed');
+    sidebar.classList.add('sidebar-open');
+  } else {
+    sidebar.classList.add('sidebar-collapsed');
+    sidebar.classList.remove('sidebar-open');
+  }
+}
+
+/**
+ * Toggle sidebar open/closed
+ */
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+
+  const isCurrentlyOpen = sidebar.classList.contains('sidebar-open');
+
+  if (isCurrentlyOpen) {
+    sidebar.classList.remove('sidebar-open');
+    sidebar.classList.add('sidebar-collapsed');
+    localStorage.setItem('sidebar-state', 'collapsed');
+  } else {
+    sidebar.classList.remove('sidebar-collapsed');
+    sidebar.classList.add('sidebar-open');
+    localStorage.setItem('sidebar-state', 'open');
   }
 }
 
@@ -137,6 +180,12 @@ function setupEventListeners() {
 
   // Theme toggle
   adminThemeToggle.addEventListener('click', toggleTheme);
+
+  // Sidebar toggle
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', toggleSidebar);
+  }
 
   // Security banner
   document.getElementById('dismissAdminSecurityBanner').addEventListener('click', () => {
@@ -701,6 +750,221 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+/**
+ * Load widget settings
+ */
+async function loadWidgetSettings() {
+  try {
+    const response = await fetch('/api/settings');
+    if (!response.ok) throw new Error('Failed to load settings');
+
+    const settings = await response.json();
+
+    // Update toggles
+    const timeToggle = document.getElementById('timeWidgetToggle');
+    const weatherToggle = document.getElementById('weatherWidgetToggle');
+
+    if (timeToggle) {
+      timeToggle.checked = settings.timeWidgetEnabled === true || settings.timeWidgetEnabled === 'true';
+    }
+
+    if (weatherToggle) {
+      weatherToggle.checked = settings.weatherWidgetEnabled === true || settings.weatherWidgetEnabled === 'true';
+    }
+
+    // Show current weather location if set
+    if (settings.weatherLocation && settings.weatherLat && settings.weatherLon) {
+      document.getElementById('currentWeatherLocation').classList.remove('hidden');
+      document.getElementById('currentLocationName').textContent = settings.weatherLocation;
+      document.getElementById('currentLocationCoords').textContent = `${settings.weatherLat}, ${settings.weatherLon}`;
+    }
+
+    // Setup event listeners
+    setupWidgetEventListeners();
+  } catch (error) {
+    console.error('Error loading widget settings:', error);
+  }
+}
+
+/**
+ * Setup widget event listeners
+ */
+function setupWidgetEventListeners() {
+  // Search location button
+  const searchBtn = document.getElementById('searchLocationBtn');
+  if (searchBtn) {
+    searchBtn.addEventListener('click', searchLocation);
+  }
+
+  // Save settings button
+  const saveBtn = document.getElementById('saveWidgetSettings');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', saveWidgetSettings);
+  }
+
+  // Clear location button
+  const clearBtn = document.getElementById('clearLocationBtn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', clearWeatherLocation);
+  }
+
+  // Enter key in search input
+  const locationInput = document.getElementById('weatherLocationInput');
+  if (locationInput) {
+    locationInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchLocation();
+      }
+    });
+  }
+}
+
+/**
+ * Search for location using Open-Meteo Geocoding API
+ */
+async function searchLocation() {
+  const input = document.getElementById('weatherLocationInput');
+  const query = input.value.trim();
+
+  if (!query) {
+    showToast('Please enter a location', 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`
+    );
+
+    if (!response.ok) throw new Error('Failed to search location');
+
+    const data = await response.json();
+
+    if (!data.results || data.results.length === 0) {
+      showToast('No locations found', 'error');
+      return;
+    }
+
+    displayLocationResults(data.results);
+  } catch (error) {
+    console.error('Error searching location:', error);
+    showToast('Failed to search location', 'error');
+  }
+}
+
+/**
+ * Display location search results
+ */
+function displayLocationResults(results) {
+  const resultsContainer = document.getElementById('locationResults');
+  const resultsList = document.getElementById('locationResultsList');
+
+  resultsList.innerHTML = '';
+
+  results.forEach(result => {
+    const locationName = [
+      result.name,
+      result.admin1,
+      result.country
+    ].filter(Boolean).join(', ');
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'w-full text-left px-4 py-3 hover:bg-slate-800 transition-colors';
+    button.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-medium text-white">${escapeHtml(locationName)}</p>
+          <p class="text-xs text-slate-400 mt-1">${result.latitude.toFixed(4)}, ${result.longitude.toFixed(4)}</p>
+        </div>
+        <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </div>
+    `;
+
+    button.addEventListener('click', () => {
+      selectLocation(locationName, result.latitude, result.longitude);
+    });
+
+    resultsList.appendChild(button);
+  });
+
+  resultsContainer.classList.remove('hidden');
+}
+
+/**
+ * Select a location from search results
+ */
+function selectLocation(name, lat, lon) {
+  document.getElementById('currentWeatherLocation').classList.remove('hidden');
+  document.getElementById('currentLocationName').textContent = name;
+  document.getElementById('currentLocationCoords').textContent = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+
+  // Hide search results
+  document.getElementById('locationResults').classList.add('hidden');
+
+  // Clear search input
+  document.getElementById('weatherLocationInput').value = '';
+
+  showToast('Location selected', 'success');
+}
+
+/**
+ * Clear weather location
+ */
+function clearWeatherLocation() {
+  document.getElementById('currentWeatherLocation').classList.add('hidden');
+  document.getElementById('currentLocationName').textContent = '--';
+  document.getElementById('currentLocationCoords').textContent = '--';
+}
+
+/**
+ * Save widget settings
+ */
+async function saveWidgetSettings() {
+  try {
+    const timeEnabled = document.getElementById('timeWidgetToggle').checked;
+    const weatherEnabled = document.getElementById('weatherWidgetToggle').checked;
+
+    const currentLocationName = document.getElementById('currentLocationName').textContent;
+    const currentLocationCoords = document.getElementById('currentLocationCoords').textContent;
+
+    let weatherLocation = '';
+    let weatherLat = '';
+    let weatherLon = '';
+
+    if (currentLocationName !== '--' && currentLocationCoords !== '--') {
+      weatherLocation = currentLocationName;
+      const coords = currentLocationCoords.split(', ');
+      weatherLat = coords[0];
+      weatherLon = coords[1];
+    }
+
+    const settings = {
+      timeWidgetEnabled: timeEnabled,
+      weatherWidgetEnabled: weatherEnabled,
+      weatherLocation,
+      weatherLat,
+      weatherLon
+    };
+
+    const response = await fetch('/api/settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings)
+    });
+
+    if (!response.ok) throw new Error('Failed to save settings');
+
+    showToast('Widget settings saved successfully', 'success');
+  } catch (error) {
+    console.error('Error saving widget settings:', error);
+    showToast('Failed to save widget settings', 'error');
+  }
 }
 
 /**

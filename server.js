@@ -104,6 +104,29 @@ function initializeDatabase() {
     )
   `);
 
+  // Settings table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    )
+  `);
+
+  // Initialize default settings if not exists
+  const settingsCount = db.prepare('SELECT COUNT(*) as count FROM settings').get();
+  if (settingsCount.count === 0) {
+    console.log('Initializing default settings...');
+    const insertSetting = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
+    insertSetting.run('timeWidgetEnabled', 'false');
+    insertSetting.run('weatherWidgetEnabled', 'false');
+    insertSetting.run('weatherLocation', '');
+    insertSetting.run('weatherLat', '');
+    insertSetting.run('weatherLon', '');
+    console.log('Default settings initialized');
+  }
+
   console.log('Database tables created/verified');
 
   // Check if we need to add example apps
@@ -166,9 +189,11 @@ app.locals.db = db;
 // API Routes
 const appsRouter = require('./routes/apps');
 const uploadsRouter = require('./routes/uploads');
+const settingsRouter = require('./routes/settings');
 
 app.use('/api/apps', appsRouter);
 app.use('/api/uploads', uploadsRouter);
+app.use('/api/settings', settingsRouter);
 
 // Serve main dashboard
 app.get('/', (req, res) => {

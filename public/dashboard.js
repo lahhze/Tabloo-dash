@@ -10,6 +10,9 @@ let currentTagFilter = '';
 let currentSectionFilter = '';
 let currentTheme = 'dark';
 let quickAddUploadedIcon = null;
+let dashboardSettings = {};
+let weatherUpdateInterval = null;
+let timeUpdateInterval = null;
 
 // DOM elements
 const appsContainer = document.getElementById('appsContainer');
@@ -35,8 +38,12 @@ async function init() {
   initTheme();
   initSecurityBanner();
   initView();
+  initSidebar();
+  initTopMenu();
   setupEventListeners();
+  await loadSettings();
   await loadApps();
+  initializeWidgets();
 }
 
 /**
@@ -98,7 +105,66 @@ function initSecurityBanner() {
   const dismissed = localStorage.getItem('dashboard-security-dismissed') === 'true';
   if (dismissed) {
     securityBanner.classList.add('hidden');
-    securityInfoIcon.classList.remove('hidden');
+    // Show in sidebar instead
+    const sidebarNotice = document.getElementById('sidebarSecurityNotice');
+    if (sidebarNotice) {
+      sidebarNotice.classList.remove('hidden');
+    }
+  }
+}
+
+/**
+ * Initialize top menu state
+ */
+function initTopMenu() {
+  const topControls = document.querySelector('.top-controls');
+  const topMenuState = localStorage.getItem('top-menu-state') || 'collapsed';
+
+  if (topMenuState === 'open') {
+    topControls.classList.remove('collapsed');
+  } else {
+    topControls.classList.add('collapsed');
+  }
+}
+
+/**
+ * Initialize sidebar state
+ */
+function initSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+
+  if (!sidebar || !sidebarToggle) return;
+
+  // Get saved state from localStorage (default to closed/collapsed)
+  const sidebarState = localStorage.getItem('sidebar-state') || 'collapsed';
+
+  if (sidebarState === 'open') {
+    sidebar.classList.remove('sidebar-collapsed');
+    sidebar.classList.add('sidebar-open');
+  } else {
+    sidebar.classList.add('sidebar-collapsed');
+    sidebar.classList.remove('sidebar-open');
+  }
+}
+
+/**
+ * Toggle sidebar open/closed
+ */
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+
+  const isCurrentlyOpen = sidebar.classList.contains('sidebar-open');
+
+  if (isCurrentlyOpen) {
+    sidebar.classList.remove('sidebar-open');
+    sidebar.classList.add('sidebar-collapsed');
+    localStorage.setItem('sidebar-state', 'collapsed');
+  } else {
+    sidebar.classList.remove('sidebar-collapsed');
+    sidebar.classList.add('sidebar-open');
+    localStorage.setItem('sidebar-state', 'open');
   }
 }
 
@@ -130,18 +196,40 @@ function setupEventListeners() {
   // Theme toggle
   themeToggle.addEventListener('click', toggleTheme);
 
+  // Sidebar toggle
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', toggleSidebar);
+  }
+
+  // Top menu toggle
+  const topMenuToggle = document.getElementById('topMenuToggle');
+  if (topMenuToggle) {
+    topMenuToggle.addEventListener('click', toggleTopMenu);
+  }
+
   // Security banner
   document.getElementById('dismissSecurityBanner').addEventListener('click', () => {
     localStorage.setItem('dashboard-security-dismissed', 'true');
     securityBanner.classList.add('hidden');
-    securityInfoIcon.classList.remove('hidden');
+    // Show in sidebar instead
+    const sidebarNotice = document.getElementById('sidebarSecurityNotice');
+    if (sidebarNotice) {
+      sidebarNotice.classList.remove('hidden');
+    }
   });
 
-  securityInfoIcon.addEventListener('click', () => {
-    localStorage.removeItem('dashboard-security-dismissed');
-    securityBanner.classList.remove('hidden');
-    securityInfoIcon.classList.add('hidden');
-  });
+  // Click sidebar security notice to restore banner
+  const sidebarNotice = document.getElementById('sidebarSecurityNotice');
+  if (sidebarNotice) {
+    sidebarNotice.addEventListener('click', () => {
+      localStorage.removeItem('dashboard-security-dismissed');
+      securityBanner.classList.remove('hidden');
+      sidebarNotice.classList.add('hidden');
+    });
+    sidebarNotice.style.cursor = 'pointer';
+    sidebarNotice.title = 'Click to restore banner';
+  }
 
   // View mode buttons
   document.querySelectorAll('.view-btn').forEach(btn => {
@@ -1077,6 +1165,201 @@ async function moveAppToSection(appId, newSection) {
     console.error('Error moving app:', error);
     showToast('Failed to move app to new section', 'error');
   }
+}
+
+/**
+ * Toggle top menu
+ */
+function toggleTopMenu() {
+  const topControls = document.querySelector('.top-controls');
+  const toggleIcon = document.querySelector('.top-menu-toggle-icon');
+
+  if (!topControls || !toggleIcon) return;
+
+  const isCurrentlyOpen = !topControls.classList.contains('collapsed');
+
+  if (isCurrentlyOpen) {
+    topControls.classList.add('collapsed');
+    toggleIcon.classList.remove('rotated');
+    localStorage.setItem('top-menu-state', 'collapsed');
+  } else {
+    topControls.classList.remove('collapsed');
+    toggleIcon.classList.add('rotated');
+    localStorage.setItem('top-menu-state', 'open');
+  }
+}
+
+/**
+ * Load dashboard settings
+ */
+async function loadSettings() {
+  try {
+    const response = await fetch('/api/settings');
+    if (!response.ok) throw new Error('Failed to load settings');
+
+    dashboardSettings = await response.json();
+  } catch (error) {
+    console.error('Error loading settings:', error);
+    dashboardSettings = {
+      timeWidgetEnabled: false,
+      weatherWidgetEnabled: false,
+      weatherLocation: '',
+      weatherLat: '',
+      weatherLon: ''
+    };
+  }
+}
+
+/**
+ * Initialize widgets based on settings
+ */
+function initializeWidgets() {
+  const widgetsContainer = document.getElementById('dashboardWidgets');
+  const timeWidget = document.getElementById('timeWidget');
+  const weatherWidget = document.getElementById('weatherWidget');
+
+  let anyWidgetEnabled = false;
+
+  // Time widget
+  if (dashboardSettings.timeWidgetEnabled === true || dashboardSettings.timeWidgetEnabled === 'true') {
+    timeWidget.classList.remove('hidden');
+    anyWidgetEnabled = true;
+    startTimeWidget();
+  }
+
+  // Weather widget
+  if (dashboardSettings.weatherWidgetEnabled === true || dashboardSettings.weatherWidgetEnabled === 'true') {
+    if (dashboardSettings.weatherLat && dashboardSettings.weatherLon) {
+      weatherWidget.classList.remove('hidden');
+      anyWidgetEnabled = true;
+      startWeatherWidget();
+    }
+  }
+
+  if (anyWidgetEnabled) {
+    widgetsContainer.classList.remove('hidden');
+  }
+}
+
+/**
+ * Start time widget updates
+ */
+function startTimeWidget() {
+  updateTime();
+  if (timeUpdateInterval) clearInterval(timeUpdateInterval);
+  timeUpdateInterval = setInterval(updateTime, 1000);
+}
+
+/**
+ * Update time display
+ */
+function updateTime() {
+  const now = new Date();
+
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  const timeDisplay = document.getElementById('timeDisplay');
+  const dateDisplay = document.getElementById('dateDisplay');
+
+  if (timeDisplay) {
+    timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+  }
+
+  if (dateDisplay) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateDisplay.textContent = now.toLocaleDateString('en-US', options);
+  }
+}
+
+/**
+ * Start weather widget updates
+ */
+function startWeatherWidget() {
+  updateWeather();
+  if (weatherUpdateInterval) clearInterval(weatherUpdateInterval);
+  // Update every 10 minutes
+  weatherUpdateInterval = setInterval(updateWeather, 10 * 60 * 1000);
+}
+
+/**
+ * Update weather display
+ */
+async function updateWeather() {
+  const lat = dashboardSettings.weatherLat;
+  const lon = dashboardSettings.weatherLon;
+  const location = dashboardSettings.weatherLocation;
+
+  if (!lat || !lon) return;
+
+  try {
+    // Using Open-Meteo API (no API key required)
+    const response = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`
+    );
+
+    if (!response.ok) throw new Error('Failed to fetch weather');
+
+    const data = await response.json();
+    const current = data.current;
+
+    const weatherTemp = document.getElementById('weatherTemp');
+    const weatherCondition = document.getElementById('weatherCondition');
+    const weatherLocation = document.getElementById('weatherLocation');
+
+    if (weatherTemp) {
+      weatherTemp.textContent = `${Math.round(current.temperature_2m)}°F`;
+    }
+
+    if (weatherCondition) {
+      weatherCondition.textContent = getWeatherDescription(current.weather_code);
+    }
+
+    if (weatherLocation) {
+      weatherLocation.textContent = location || 'Unknown Location';
+    }
+  } catch (error) {
+    console.error('Error updating weather:', error);
+    const weatherCondition = document.getElementById('weatherCondition');
+    if (weatherCondition) {
+      weatherCondition.textContent = 'Unable to load weather';
+    }
+  }
+}
+
+/**
+ * Get weather description from WMO code
+ */
+function getWeatherDescription(code) {
+  const weatherCodes = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    45: 'Foggy',
+    48: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    61: 'Slight rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    71: 'Slight snow',
+    73: 'Moderate snow',
+    75: 'Heavy snow',
+    77: 'Snow grains',
+    80: 'Slight rain showers',
+    81: 'Moderate rain showers',
+    82: 'Violent rain showers',
+    85: 'Slight snow showers',
+    86: 'Heavy snow showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with slight hail',
+    99: 'Thunderstorm with heavy hail'
+  };
+
+  return weatherCodes[code] || 'Unknown';
 }
 
 // Initialize on page load

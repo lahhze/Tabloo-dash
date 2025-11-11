@@ -1180,3 +1180,273 @@ select {
     padding-right: 0.75rem;
   }
 }
+
+/* Collapsible Sidebar Styles */
+#sidebar {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+}
+
+#sidebar.sidebar-collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+#sidebar.sidebar-open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Main content area expansion when sidebar is collapsed */
+.main-wrapper {
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 0;
+}
+
+@media (min-width: 1024px) {
+  .sidebar-open ~ .main-wrapper {
+    margin-left: 288px; /* 18rem / w-72 */
+  }
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 80px;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  border: none;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 30;
+  box-shadow: 4px 0 15px rgba(59, 130, 246, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-toggle:hover {
+  width: 44px;
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  box-shadow: 6px 0 20px rgba(59, 130, 246, 0.6);
+}
+
+.sidebar-toggle:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.sidebar-toggle-icon {
+  width: 20px;
+  height: 20px;
+  color: white;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Arrow rotation when sidebar is open */
+.sidebar-open ~ .sidebar-toggle .sidebar-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Sidebar position adjustment when open */
+.sidebar-open ~ .sidebar-toggle {
+  left: 288px; /* 72 * 4 = 288px (width of sidebar) */
+}
+
+/* Mobile/Tablet - Hide toggle button below large breakpoint */
+@media (max-width: 1023px) {
+  .sidebar-toggle {
+    display: none;
+  }
+}
+
+/* Light theme adjustments */
+[data-theme="light"] .sidebar-toggle {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  box-shadow: 4px 0 15px rgba(37, 99, 235, 0.3);
+}
+
+[data-theme="light"] .sidebar-toggle:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+  box-shadow: 6px 0 20px rgba(37, 99, 235, 0.5);
+}
+
+/* Smooth transition for content area when sidebar toggles */
+.flex-1.flex.flex-col {
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure sidebar content is hidden when collapsed */
+#sidebar.sidebar-collapsed {
+  pointer-events: none;
+}
+
+#sidebar.sidebar-open {
+  pointer-events: auto;
+}
+
+/* Add subtle backdrop blur effect when sidebar animates */
+@supports (backdrop-filter: blur(10px)) {
+  #sidebar {
+    backdrop-filter: blur(20px);
+  }
+}
+
+/* Collapsible Top Menu Styles */
+.top-controls {
+  max-height: 200px;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+}
+
+.top-controls.collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Top Menu Toggle Button */
+.top-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 8px;
+  background: rgba(var(--bg-secondary-rgb), 0.6);
+  border: none;
+  border-bottom: 1px solid var(--border-primary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.top-menu-toggle:hover {
+  background: rgba(var(--bg-tertiary-rgb), 0.6);
+}
+
+.top-menu-toggle-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.top-menu-toggle-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* Widget Styles */
+.dashboard-widgets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.widget {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+  border: 1px solid var(--border-primary);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.widget:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Time Widget */
+.time-widget {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+}
+
+.time-display {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.date-display {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Weather Widget */
+.weather-widget {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+}
+
+.weather-temp {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, #34d399 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.weather-condition {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.weather-location {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.weather-icon {
+  width: 64px;
+  height: 64px;
+}
+
+/* Security Notice in Sidebar */
+.sidebar-security-notice {
+  margin-top: auto;
+  margin-bottom: 1.5rem;
+  padding: 1rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-primary);
+  background: rgba(var(--bg-secondary-rgb), 0.4);
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.sidebar-security-notice .security-title {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-security-notice p {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-security-notice p:last-child {
+  margin-bottom: 0;
+}

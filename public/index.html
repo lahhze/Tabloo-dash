@@ -17,7 +17,7 @@
 
   <div class="flex min-h-screen bg-slate-950/90">
     <!-- Sidebar -->
-    <aside class="hidden lg:flex w-72 flex-col border-r border-slate-800 bg-slate-950/60 backdrop-blur-xl">
+    <aside id="sidebar" class="sidebar-collapsed hidden lg:flex w-72 flex-col border-r border-slate-800 bg-slate-950/60 backdrop-blur-xl" style="overflow-y: auto;">
       <div class="px-6 pt-8 pb-6 flex items-center gap-3">
         <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-500 via-sky-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
           <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,16 +70,23 @@
           </a>
         </div>
 
-        <div class="mt-auto mb-6 px-3 py-4 rounded-xl border border-slate-800 bg-slate-900/40 text-xs text-slate-400 space-y-2">
-          <p class="text-slate-300 font-medium">Security Reminder</p>
+        <div id="sidebarSecurityNotice" class="sidebar-security-notice hidden">
+          <p class="security-title">Security Reminder</p>
           <p>Run Tabloo on trusted networks only. Add auth in front if you expose it publicly.</p>
           <p class="text-slate-500">Contact admin team to discuss reverse proxy hardening.</p>
         </div>
       </nav>
     </aside>
 
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="sidebar-toggle" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+      <svg class="sidebar-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+
     <!-- Content -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col main-wrapper">
       <!-- Security Banner -->
       <div id="securityBanner" class="security-banner bg-amber-500/90 text-slate-950 py-3 px-6 text-sm flex items-center justify-center gap-2">
         <strong class="font-semibold tracking-wide uppercase">Security Notice:</strong>
@@ -93,6 +100,13 @@
 
       <!-- Top Control Bar -->
       <div class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/95 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/80">
+        <!-- Top Menu Toggle Button -->
+        <button id="topMenuToggle" class="top-menu-toggle" title="Toggle Controls" aria-label="Toggle Top Menu">
+          <svg class="top-menu-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
         <div class="mx-auto w-full max-w-7xl px-6">
           <!-- Title Row -->
           <div class="py-4 flex items-center justify-between border-b border-slate-800/50">
@@ -128,7 +142,7 @@
           </div>
 
           <!-- Controls Row -->
-          <div class="py-3 flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
+          <div class="top-controls collapsed py-3 flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
             <!-- Search -->
             <div class="relative flex-1 max-w-md">
               <input
@@ -193,6 +207,37 @@
       <!-- Main -->
       <main class="flex-1 overflow-y-auto">
         <div class="mx-auto w-full max-w-7xl px-6 py-8">
+
+          <!-- Dashboard Widgets -->
+          <div id="dashboardWidgets" class="dashboard-widgets hidden">
+            <!-- Time Widget -->
+            <div id="timeWidget" class="widget time-widget hidden">
+              <div class="flex items-center justify-between mb-4">
+                <svg class="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div class="time-display" id="timeDisplay">--:--</div>
+              <div class="date-display" id="dateDisplay">Loading...</div>
+            </div>
+
+            <!-- Weather Widget -->
+            <div id="weatherWidget" class="widget weather-widget hidden">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center gap-3 mb-2">
+                    <svg class="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                    </svg>
+                  </div>
+                  <div class="weather-temp" id="weatherTemp">--°</div>
+                  <div class="weather-condition" id="weatherCondition">Loading...</div>
+                  <div class="weather-location" id="weatherLocation">--</div>
+                </div>
+                <img id="weatherIcon" class="weather-icon" alt="Weather icon" style="display: none;">
+              </div>
+            </div>
+          </div>
 
           <!-- Apps -->
           <section id="apps" class="space-y-8">

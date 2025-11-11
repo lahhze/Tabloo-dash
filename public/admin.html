@@ -17,7 +17,7 @@
 
   <div class="flex min-h-screen bg-slate-950/90">
     <!-- Sidebar -->
-    <aside class="hidden lg:flex w-72 flex-col border-r border-slate-800 bg-slate-950/60 backdrop-blur-xl">
+    <aside id="sidebar" class="sidebar-collapsed hidden lg:flex w-72 flex-col border-r border-slate-800 bg-slate-950/60 backdrop-blur-xl">
       <div class="px-6 pt-8 pb-6 flex items-center gap-3">
         <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-rose-500 via-fuchsia-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-rose-500/40">
           <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,6 +57,14 @@
             </span>
             Bulk Add
           </button>
+          <button type="button" class="tab-btn group flex w-full items-center gap-3 rounded-lg border border-slate-800 px-3 py-2 text-left text-slate-300 transition-colors" data-tab="widgets">
+            <span class="tab-icon flex h-8 w-8 items-center justify-center rounded-md bg-slate-900/40 transition-colors">
+              <svg class="w-4 h-4 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+              </svg>
+            </span>
+            Widget Settings
+          </button>
         </div>
 
         <div>
@@ -77,8 +85,15 @@
       </nav>
     </aside>
 
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="sidebar-toggle" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+      <svg class="sidebar-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+
     <!-- Content -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col main-wrapper">
       <!-- Security Banner -->
       <div id="adminSecurityBanner" class="security-banner bg-rose-500/90 text-slate-950 py-3 px-6 text-sm font-medium flex items-center justify-center gap-2">
         ADMIN PANEL - NO AUTHENTICATION - PRIVATE NETWORK ONLY
@@ -238,6 +253,100 @@
                 <div id="bulkResults" class="hidden">
                   <h4 class="text-lg font-semibold text-white mb-3">Import Results</h4>
                   <div id="bulkResultsContent" class="rounded-xl border border-slate-800 bg-slate-950/60 p-4 text-sm"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Widget Settings Tab -->
+          <section id="widgetsTab" class="tab-content hidden space-y-6">
+            <!-- Time Widget Settings -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-slate-950/40 backdrop-blur">
+              <div class="p-6 lg:p-8 space-y-6">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="text-2xl font-semibold text-white flex items-center gap-3">
+                      <svg class="w-7 h-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      Time & Date Widget
+                    </h3>
+                    <p class="text-sm text-slate-400 mt-2">Display current time and date on your dashboard</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-sm text-slate-400">Enabled</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="timeWidgetToggle" class="sr-only peer">
+                      <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weather Widget Settings -->
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/70 shadow-lg shadow-slate-950/40 backdrop-blur">
+              <div class="p-6 lg:p-8 space-y-6">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="text-2xl font-semibold text-white flex items-center gap-3">
+                      <svg class="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                      </svg>
+                      Weather Widget
+                    </h3>
+                    <p class="text-sm text-slate-400 mt-2">Show real-time weather conditions for your location</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-sm text-slate-400">Enabled</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" id="weatherWidgetToggle" class="sr-only peer">
+                      <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="space-y-4 border-t border-slate-800 pt-6">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Location</label>
+                    <div class="flex gap-3">
+                      <input type="text" id="weatherLocationInput" placeholder="Enter city name (e.g., San Francisco)" class="flex-1 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/60">
+                      <button type="button" id="searchLocationBtn" class="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Search
+                      </button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Search for your city to get weather updates</p>
+                  </div>
+
+                  <div id="locationResults" class="hidden space-y-2">
+                    <label class="block text-sm font-medium text-slate-300">Search Results</label>
+                    <div id="locationResultsList" class="rounded-xl border border-slate-800 bg-slate-950/60 divide-y divide-slate-800 max-h-64 overflow-y-auto"></div>
+                  </div>
+
+                  <div id="currentWeatherLocation" class="hidden rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-medium text-slate-300">Current Location</p>
+                        <p id="currentLocationName" class="text-lg font-semibold text-white mt-1">--</p>
+                        <p id="currentLocationCoords" class="text-xs text-slate-500 mt-1">--</p>
+                      </div>
+                      <button type="button" id="clearLocationBtn" class="text-sm text-red-400 hover:text-red-300 transition-colors">
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex gap-3 border-t border-slate-800 pt-6">
+                  <button type="button" id="saveWidgetSettings" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/40 hover:from-sky-400 hover:to-indigo-500 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Save Settings
+                  </button>
                 </div>
               </div>
             </div>
