@@ -21,7 +21,6 @@ const loadingState = document.getElementById('loadingState');
 const emptyState = document.getElementById('emptyState');
 const quickAddModal = document.getElementById('quickAddModal');
 const quickAddForm = document.getElementById('quickAddForm');
-const fabQuickAdd = document.getElementById('fabQuickAdd');
 const themeToggle = document.getElementById('themeToggle');
 const securityBanner = document.getElementById('securityBanner');
 const securityInfoIcon = document.getElementById('securityInfoIcon');
@@ -155,13 +154,7 @@ function setupEventListeners() {
     });
   });
 
-  // Quick add modal
-  fabQuickAdd.addEventListener('click', () => {
-    quickAddModal.classList.remove('hidden');
-    quickAddForm.reset();
-    quickAddForm.querySelector('input[name="name"]').focus();
-  });
-
+  // Quick add modal close buttons
   document.getElementById('closeQuickAdd').addEventListener('click', closeQuickAddModal);
   document.getElementById('cancelQuickAdd').addEventListener('click', closeQuickAddModal);
 

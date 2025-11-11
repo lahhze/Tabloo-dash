@@ -351,6 +351,10 @@ body {
 /* View button active state */
 .view-btn {
   color: #94a3b8;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .view-btn.active {
@@ -359,7 +363,22 @@ body {
 }
 
 .view-btn:hover:not(.active) {
-  background-color: #475569;
+  background-color: rgba(71, 85, 105, 0.5);
+}
+
+.view-btn svg {
+  pointer-events: none;
+}
+
+/* Top control bar styling */
+.sticky.top-0 select {
+  cursor: pointer;
+  min-width: 140px;
+}
+
+.sticky.top-0 select:hover {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  border-color: var(--border-secondary) !important;
 }
 
 /* App card hover effects */
@@ -749,16 +768,16 @@ select {
 /* Theme Toggle Button */
 .theme-toggle {
   position: relative;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .theme-toggle:hover {
@@ -767,10 +786,10 @@ select {
 }
 
 .theme-toggle svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: var(--text-secondary);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .theme-toggle:hover svg {
@@ -1120,4 +1139,44 @@ select {
 /* Compact grid spacing adjustments */
 .view-compact .section-drop-zone {
   gap: 0.75rem;
+}
+
+/* Top bar responsive adjustments */
+@media (max-width: 1024px) {
+  .sticky.top-0 select {
+    min-width: 120px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sticky.top-0 .py-4 {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .sticky.top-0 .py-3 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .sticky.top-0 h1 {
+    font-size: 1.125rem;
+  }
+
+  .sticky.top-0 select {
+    min-width: auto;
+    flex: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  #topQuickAdd span {
+    display: none;
+  }
+
+  #topQuickAdd {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
 }
