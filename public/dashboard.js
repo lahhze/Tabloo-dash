@@ -13,13 +13,11 @@ let quickAddUploadedIcon = null;
 let dashboardSettings = {};
 let weatherUpdateInterval = null;
 let timeUpdateInterval = null;
+let appHealthUpdateInterval = null;
+let appHealthCheckInProgress = false;
 
 // DOM elements
 const appsContainer = document.getElementById('appsContainer');
-const searchInput = document.getElementById('searchInput');
-const sortSelect = document.getElementById('sortSelect');
-const tagFilter = document.getElementById('tagFilter');
-const sectionFilter = document.getElementById('sectionFilter');
 const loadingState = document.getElementById('loadingState');
 const emptyState = document.getElementById('emptyState');
 const quickAddModal = document.getElementById('quickAddModal');
@@ -39,11 +37,11 @@ async function init() {
   initSecurityBanner();
   initView();
   initSidebar();
-  initTopMenu();
   setupEventListeners();
   await loadSettings();
   await loadApps();
   initializeWidgets();
+  initializeWidgetDragAndResize();
 }
 
 /**
@@ -77,15 +75,22 @@ function initTheme() {
  */
 function applyTheme(theme) {
   document.body.setAttribute('data-theme', theme);
+  updateThemeUI(theme);
+}
+
+/**
+ * Update theme toggle UI
+ */
+function updateThemeUI(theme) {
   const sunIcon = document.getElementById('sunIcon');
   const moonIcon = document.getElementById('moonIcon');
 
   if (theme === 'light') {
-    sunIcon.classList.remove('hidden');
-    moonIcon.classList.add('hidden');
+    if (sunIcon) sunIcon.classList.remove('hidden');
+    if (moonIcon) moonIcon.classList.add('hidden');
   } else {
-    sunIcon.classList.add('hidden');
-    moonIcon.classList.remove('hidden');
+    if (sunIcon) sunIcon.classList.add('hidden');
+    if (moonIcon) moonIcon.classList.remove('hidden');
   }
 }
 
@@ -113,19 +118,6 @@ function initSecurityBanner() {
   }
 }
 
-/**
- * Initialize top menu state
- */
-function initTopMenu() {
-  const topControls = document.querySelector('.top-controls');
-  const topMenuState = localStorage.getItem('top-menu-state') || 'collapsed';
-
-  if (topMenuState === 'open') {
-    topControls.classList.remove('collapsed');
-  } else {
-    topControls.classList.add('collapsed');
-  }
-}
 
 /**
  * Initialize sidebar state
@@ -172,29 +164,10 @@ function toggleSidebar() {
  * Setup event listeners
  */
 function setupEventListeners() {
-  // Search
-  searchInput.addEventListener('input', debounce(filterAndRenderApps, 300));
-
-  // Sort
-  sortSelect.addEventListener('change', (e) => {
-    currentSort = e.target.value;
-    filterAndRenderApps();
-  });
-
-  // Tag filter
-  tagFilter.addEventListener('change', (e) => {
-    currentTagFilter = e.target.value;
-    filterAndRenderApps();
-  });
-
-  // Section filter
-  sectionFilter.addEventListener('change', (e) => {
-    currentSectionFilter = e.target.value;
-    filterAndRenderApps();
-  });
-
   // Theme toggle
-  themeToggle.addEventListener('click', toggleTheme);
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+  }
 
   // Sidebar toggle
   const sidebarToggle = document.getElementById('sidebarToggle');
@@ -202,22 +175,19 @@ function setupEventListeners() {
     sidebarToggle.addEventListener('click', toggleSidebar);
   }
 
-  // Top menu toggle
-  const topMenuToggle = document.getElementById('topMenuToggle');
-  if (topMenuToggle) {
-    topMenuToggle.addEventListener('click', toggleTopMenu);
-  }
-
   // Security banner
-  document.getElementById('dismissSecurityBanner').addEventListener('click', () => {
-    localStorage.setItem('dashboard-security-dismissed', 'true');
-    securityBanner.classList.add('hidden');
-    // Show in sidebar instead
-    const sidebarNotice = document.getElementById('sidebarSecurityNotice');
-    if (sidebarNotice) {
-      sidebarNotice.classList.remove('hidden');
-    }
-  });
+  const dismissSecurityBanner = document.getElementById('dismissSecurityBanner');
+  if (dismissSecurityBanner) {
+    dismissSecurityBanner.addEventListener('click', () => {
+      localStorage.setItem('dashboard-security-dismissed', 'true');
+      securityBanner.classList.add('hidden');
+      // Show in sidebar instead
+      const sidebarNotice = document.getElementById('sidebarSecurityNotice');
+      if (sidebarNotice) {
+        sidebarNotice.classList.remove('hidden');
+      }
+    });
+  }
 
   // Click sidebar security notice to restore banner
   const sidebarNotice = document.getElementById('sidebarSecurityNotice');
@@ -231,46 +201,87 @@ function setupEventListeners() {
     sidebarNotice.title = 'Click to restore banner';
   }
 
-  // View mode buttons
-  document.querySelectorAll('.view-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentView = btn.dataset.view;
-      localStorage.setItem('dashboard-view', currentView);
-      filterAndRenderApps();
-    });
-  });
-
   // Quick add modal close buttons
-  document.getElementById('closeQuickAdd').addEventListener('click', closeQuickAddModal);
-  document.getElementById('cancelQuickAdd').addEventListener('click', closeQuickAddModal);
+  const closeQuickAdd = document.getElementById('closeQuickAdd');
+  const cancelQuickAdd = document.getElementById('cancelQuickAdd');
 
-  quickAddModal.addEventListener('click', (e) => {
-    if (e.target === quickAddModal) {
-      closeQuickAddModal();
-    }
-  });
+  if (closeQuickAdd) closeQuickAdd.addEventListener('click', closeQuickAddModal);
+  if (cancelQuickAdd) cancelQuickAdd.addEventListener('click', closeQuickAddModal);
 
-  quickAddForm.addEventListener('submit', handleQuickAdd);
+  if (quickAddModal) {
+    quickAddModal.addEventListener('click', (e) => {
+      if (e.target === quickAddModal) {
+        closeQuickAddModal();
+      }
+    });
+  }
+
+  if (quickAddForm) {
+    quickAddForm.addEventListener('submit', handleQuickAdd);
+  }
 
   // Quick add file upload
   const quickAddIconFile = document.getElementById('quickAddIconFile');
   const quickAddRemoveIcon = document.getElementById('quickAddRemoveIcon');
 
-  quickAddIconFile.addEventListener('change', handleQuickAddFileUpload);
-  quickAddRemoveIcon.addEventListener('click', clearQuickAddIcon);
+  if (quickAddIconFile) quickAddIconFile.addEventListener('change', handleQuickAddFileUpload);
+  if (quickAddRemoveIcon) quickAddRemoveIcon.addEventListener('click', clearQuickAddIcon);
+
+  // View mode buttons
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const view = btn.dataset.view;
+      if (view) {
+        changeView(view);
+      }
+    });
+  });
+
+  const appHealthRefreshBtn = document.getElementById('appHealthRefreshBtn');
+  if (appHealthRefreshBtn) {
+    appHealthRefreshBtn.addEventListener('click', () => {
+      const enabled = dashboardSettings.appHealthWidgetEnabled === true || dashboardSettings.appHealthWidgetEnabled === 'true';
+      if (!enabled) {
+        showToast('Enable the App Health widget in Admin to run checks.', 'info');
+        return;
+      }
+
+      if (appHealthCheckInProgress) {
+        showToast('Health check already running...', 'info');
+        return;
+      }
+
+      updateAppHealth();
+    });
+  }
 
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !quickAddModal.classList.contains('hidden')) {
+    if (e.key === 'Escape' && quickAddModal && !quickAddModal.classList.contains('hidden')) {
       closeQuickAddModal();
     }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      searchInput.focus();
+  });
+}
+
+/**
+ * Change view mode
+ */
+function changeView(view) {
+  currentView = view;
+  localStorage.setItem('dashboard-view', view);
+
+  // Update active button
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    if (btn.dataset.view === view) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
     }
   });
+
+  // Re-render apps
+  filterAndRenderApps();
 }
 
 /**
@@ -358,9 +369,12 @@ async function loadApps() {
 }
 
 /**
- * Populate tag filter dropdown with unique tags
+ * Populate tag filter dropdown with unique tags (if filter exists)
  */
 function populateTagFilter() {
+  const tagFilter = document.getElementById('tagFilter');
+  if (!tagFilter) return;
+
   const tags = [...new Set(allApps.map(app => app.tag).filter(Boolean))];
 
   tagFilter.innerHTML = '<option value="">All Tags</option>';
@@ -373,9 +387,12 @@ function populateTagFilter() {
 }
 
 /**
- * Populate section filter dropdown with unique sections
+ * Populate section filter dropdown with unique sections (if filter exists)
  */
 function populateSectionFilter() {
+  const sectionFilter = document.getElementById('sectionFilter');
+  if (!sectionFilter) return;
+
   const sections = [...new Set(allApps.map(app => app.section).filter(Boolean))];
 
   sectionFilter.innerHTML = '<option value="">All Sections</option>';
@@ -391,7 +408,8 @@ function populateSectionFilter() {
  * Filter and render apps based on current filters
  */
 function filterAndRenderApps() {
-  const searchTerm = searchInput.value.toLowerCase().trim();
+  const searchInput = document.getElementById('searchInput');
+  const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
   let filtered = allApps.filter(app => {
     // Search filter
@@ -1167,27 +1185,6 @@ async function moveAppToSection(appId, newSection) {
   }
 }
 
-/**
- * Toggle top menu
- */
-function toggleTopMenu() {
-  const topControls = document.querySelector('.top-controls');
-  const toggleIcon = document.querySelector('.top-menu-toggle-icon');
-
-  if (!topControls || !toggleIcon) return;
-
-  const isCurrentlyOpen = !topControls.classList.contains('collapsed');
-
-  if (isCurrentlyOpen) {
-    topControls.classList.add('collapsed');
-    toggleIcon.classList.remove('rotated');
-    localStorage.setItem('top-menu-state', 'collapsed');
-  } else {
-    topControls.classList.remove('collapsed');
-    toggleIcon.classList.add('rotated');
-    localStorage.setItem('top-menu-state', 'open');
-  }
-}
 
 /**
  * Load dashboard settings
@@ -1205,7 +1202,9 @@ async function loadSettings() {
       weatherWidgetEnabled: false,
       weatherLocation: '',
       weatherLat: '',
-      weatherLon: ''
+      weatherLon: '',
+      appHealthWidgetEnabled: false,
+      appHealthCheckInterval: 60000
     };
   }
 }
@@ -1217,6 +1216,7 @@ function initializeWidgets() {
   const widgetsContainer = document.getElementById('dashboardWidgets');
   const timeWidget = document.getElementById('timeWidget');
   const weatherWidget = document.getElementById('weatherWidget');
+  const appHealthWidget = document.getElementById('appHealthWidget');
 
   let anyWidgetEnabled = false;
 
@@ -1225,6 +1225,8 @@ function initializeWidgets() {
     timeWidget.classList.remove('hidden');
     anyWidgetEnabled = true;
     startTimeWidget();
+  } else if (timeWidget) {
+    timeWidget.classList.add('hidden');
   }
 
   // Weather widget
@@ -1234,10 +1236,25 @@ function initializeWidgets() {
       anyWidgetEnabled = true;
       startWeatherWidget();
     }
+  } else if (weatherWidget) {
+    weatherWidget.classList.add('hidden');
+  }
+
+  // App health widget
+  const appHealthEnabled = dashboardSettings.appHealthWidgetEnabled === true || dashboardSettings.appHealthWidgetEnabled === 'true';
+  if (appHealthEnabled && appHealthWidget) {
+    appHealthWidget.classList.remove('hidden');
+    anyWidgetEnabled = true;
+    startAppHealthWidget();
+  } else if (appHealthWidget) {
+    appHealthWidget.classList.add('hidden');
+    stopAppHealthWidget();
   }
 
   if (anyWidgetEnabled) {
     widgetsContainer.classList.remove('hidden');
+  } else {
+    widgetsContainer.classList.add('hidden');
   }
 }
 
@@ -1290,13 +1307,14 @@ async function updateWeather() {
   const lat = dashboardSettings.weatherLat;
   const lon = dashboardSettings.weatherLon;
   const location = dashboardSettings.weatherLocation;
+  const tempUnit = dashboardSettings.weatherTempUnit || 'fahrenheit';
 
   if (!lat || !lon) return;
 
   try {
     // Using Open-Meteo API (no API key required)
     const response = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=fahrenheit`
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=${tempUnit}`
     );
 
     if (!response.ok) throw new Error('Failed to fetch weather');
@@ -1309,7 +1327,8 @@ async function updateWeather() {
     const weatherLocation = document.getElementById('weatherLocation');
 
     if (weatherTemp) {
-      weatherTemp.textContent = `${Math.round(current.temperature_2m)}°F`;
+      const tempSymbol = tempUnit === 'celsius' ? '°C' : '°F';
+      weatherTemp.textContent = `${Math.round(current.temperature_2m)}${tempSymbol}`;
     }
 
     if (weatherCondition) {
@@ -1360,6 +1379,390 @@ function getWeatherDescription(code) {
   };
 
   return weatherCodes[code] || 'Unknown';
+}
+
+/**
+ * Start the app health widget polling loop
+ */
+function startAppHealthWidget() {
+  const enabled = dashboardSettings.appHealthWidgetEnabled === true || dashboardSettings.appHealthWidgetEnabled === 'true';
+  if (!enabled) return;
+
+  const intervalMs = Math.max(5000, parseInt(dashboardSettings.appHealthCheckInterval, 10) || 60000);
+
+  updateAppHealth();
+
+  if (appHealthUpdateInterval) {
+    clearInterval(appHealthUpdateInterval);
+  }
+
+  appHealthUpdateInterval = setInterval(updateAppHealth, intervalMs);
+}
+
+/**
+ * Stop the app health widget polling
+ */
+function stopAppHealthWidget() {
+  if (appHealthUpdateInterval) {
+    clearInterval(appHealthUpdateInterval);
+    appHealthUpdateInterval = null;
+  }
+  appHealthCheckInProgress = false;
+}
+
+/**
+ * Fetch and render app health data
+ */
+async function updateAppHealth() {
+  const widgetEnabled = dashboardSettings.appHealthWidgetEnabled === true || dashboardSettings.appHealthWidgetEnabled === 'true';
+  if (!widgetEnabled) {
+    stopAppHealthWidget();
+    return;
+  }
+
+  if (appHealthCheckInProgress) return;
+
+  const summaryEl = document.getElementById('appHealthSummary');
+  const lastCheckedEl = document.getElementById('appHealthLastChecked');
+  const listEl = document.getElementById('appHealthStatusList');
+  const refreshBtn = document.getElementById('appHealthRefreshBtn');
+
+  if (!summaryEl || !lastCheckedEl || !listEl) return;
+
+  appHealthCheckInProgress = true;
+  if (refreshBtn) refreshBtn.disabled = true;
+  summaryEl.textContent = 'Checking services...';
+  listEl.innerHTML = '<div class="app-health-empty">Checking application URLs...</div>';
+
+  try {
+    const response = await fetch('/api/apps/health/check');
+    if (!response.ok) throw new Error('Failed to check app health');
+
+    const data = await response.json();
+    const apps = data.apps || [];
+    const upCount = apps.filter(app => app.status === 'up').length;
+    const total = apps.length;
+
+    summaryEl.textContent = total ? `${upCount}/${total} services reachable` : 'No apps to monitor';
+    lastCheckedEl.textContent = `Last checked: ${data.checkedAt ? new Date(data.checkedAt).toLocaleString() : new Date().toLocaleString()}`;
+
+    renderAppHealthList(apps);
+  } catch (error) {
+    console.error('Error updating app health:', error);
+    summaryEl.textContent = 'Health check failed';
+    listEl.innerHTML = `<div class="app-health-error">Unable to complete health check. ${escapeHtml(error.message || 'Unknown error')}.</div>`;
+    showToast('Failed to check app health', 'error');
+  } finally {
+    if (refreshBtn) refreshBtn.disabled = false;
+    appHealthCheckInProgress = false;
+  }
+}
+
+/**
+ * Render the list of app health rows
+ */
+function renderAppHealthList(apps) {
+  const listEl = document.getElementById('appHealthStatusList');
+  if (!listEl) return;
+
+  if (!apps.length) {
+    listEl.innerHTML = '<div class="app-health-empty">Add applications in the admin panel to start monitoring.</div>';
+    return;
+  }
+
+  const rows = apps.map(app => {
+    const status = app.status === 'up' ? 'up' : 'down';
+    const latency = formatLatency(app.latencyMs);
+    const detailText = app.statusCode ? `HTTP ${app.statusCode}` : (app.error ? app.error : 'No response');
+    const safeDetail = escapeHtml(detailText);
+    return `
+      <div class="app-health-row">
+        <div class="app-health-left">
+          <span class="app-status-dot ${status}"></span>
+          <div>
+            <p class="app-health-name">${escapeHtml(app.name)}</p>
+            <p class="app-health-url">${escapeHtml(app.url)}</p>
+          </div>
+        </div>
+        <div class="app-health-right">
+          <p class="app-health-latency">${latency}</p>
+          <p class="app-health-status-text ${status === 'down' ? 'down' : ''}">${status === 'up' ? 'Online' : 'Offline'}</p>
+          <p class="app-health-url">${safeDetail}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  listEl.innerHTML = rows;
+}
+
+/**
+ * Format latency for display
+ */
+function formatLatency(latencyMs) {
+  if (typeof latencyMs !== 'number' || Number.isNaN(latencyMs) || latencyMs < 0) {
+    return '--';
+  }
+
+  if (latencyMs >= 1000) {
+    return `${(latencyMs / 1000).toFixed(1)}s`;
+  }
+
+  return `${Math.round(latencyMs)}ms`;
+}
+
+/**
+ * Initialize widget drag and resize functionality with grid snapping
+ */
+function initializeWidgetDragAndResize() {
+  const widgets = document.querySelectorAll('.widget');
+  const widgetsContainer = document.getElementById('dashboardWidgets');
+
+  // Load saved widget positions and sizes
+  loadWidgetPositions();
+
+  // Grid configuration
+  const GRID_COLUMNS = 12;
+  const ROW_HEIGHT = 80;
+
+  widgets.forEach(widget => {
+    const widgetId = widget.dataset.widgetId;
+    if (!widgetId) return;
+
+    // Add size indicator
+    if (!widget.querySelector('.widget-size-indicator')) {
+      const sizeIndicator = document.createElement('div');
+      sizeIndicator.className = 'widget-size-indicator';
+      widget.appendChild(sizeIndicator);
+    }
+    updateSizeIndicator(widget);
+
+    const dragHandles = widget.querySelectorAll('.widget-drag-handle');
+    const resizeHandle = widget.querySelector('.widget-resize-handle');
+
+    // Setup drag functionality with grid snapping
+    if (dragHandles.length > 0) {
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+
+      dragHandles.forEach(handle => {
+        handle.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          isDragging = true;
+          widget.classList.add('dragging');
+          widgetsContainer.classList.add('show-grid');
+
+          const containerRect = widgetsContainer.getBoundingClientRect();
+          const rect = widget.getBoundingClientRect();
+
+          startX = e.clientX;
+          startY = e.clientY;
+          initialLeft = rect.left - containerRect.left;
+          initialTop = rect.top - containerRect.top;
+
+          widget.style.position = 'absolute';
+          widget.style.left = `${initialLeft}px`;
+          widget.style.top = `${initialTop}px`;
+
+          document.addEventListener('mousemove', handleDragMove);
+          document.addEventListener('mouseup', handleDragEnd);
+        });
+      });
+
+      function handleDragMove(e) {
+        if (!isDragging) return;
+
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        widget.style.left = `${initialLeft + deltaX}px`;
+        widget.style.top = `${initialTop + deltaY}px`;
+      }
+
+      function handleDragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        widget.classList.remove('dragging');
+        widgetsContainer.classList.remove('show-grid');
+
+        document.removeEventListener('mousemove', handleDragMove);
+        document.removeEventListener('mouseup', handleDragEnd);
+
+        // Snap to grid
+        const containerRect = widgetsContainer.getBoundingClientRect();
+        const currentLeft = parseInt(widget.style.left);
+        const currentTop = parseInt(widget.style.top);
+
+        const columnWidth = containerRect.width / GRID_COLUMNS;
+        const snappedColumn = Math.round(currentLeft / columnWidth);
+        const snappedRow = Math.round(currentTop / ROW_HEIGHT);
+
+        const snappedLeft = snappedColumn * columnWidth;
+        const snappedTop = snappedRow * ROW_HEIGHT;
+
+        widget.style.left = `${snappedLeft}px`;
+        widget.style.top = `${snappedTop}px`;
+
+        // Save position with grid data
+        saveWidgetPosition(widgetId, {
+          left: widget.style.left,
+          top: widget.style.top,
+          gridColumn: snappedColumn,
+          gridRow: snappedRow,
+          position: 'absolute'
+        });
+      }
+    }
+
+    // Setup resize functionality with size presets
+    if (resizeHandle) {
+      let isResizing = false;
+      let initialSize;
+
+      resizeHandle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isResizing = true;
+        widget.classList.add('resizing');
+        widgetsContainer.classList.add('show-grid');
+
+        initialSize = widget.dataset.size || 'medium';
+
+        document.addEventListener('mousemove', handleResizeMove);
+        document.addEventListener('mouseup', handleResizeEnd);
+      });
+
+      let currentSize = initialSize;
+
+      function handleResizeMove(e) {
+        if (!isResizing) return;
+
+        // Cycle through sizes based on drag distance
+        const deltaX = e.movementX;
+
+        if (deltaX > 5) {
+          cycleSizeUp();
+        } else if (deltaX < -5) {
+          cycleSizeDown();
+        }
+      }
+
+      function cycleSizeUp() {
+        const sizes = ['small', 'medium', 'large', 'xlarge'];
+        const currentIndex = sizes.indexOf(currentSize);
+        if (currentIndex < sizes.length - 1) {
+          currentSize = sizes[currentIndex + 1];
+          widget.dataset.size = currentSize;
+          updateSizeIndicator(widget);
+        }
+      }
+
+      function cycleSizeDown() {
+        const sizes = ['small', 'medium', 'large', 'xlarge'];
+        const currentIndex = sizes.indexOf(currentSize);
+        if (currentIndex > 0) {
+          currentSize = sizes[currentIndex - 1];
+          widget.dataset.size = currentSize;
+          updateSizeIndicator(widget);
+        }
+      }
+
+      function handleResizeEnd() {
+        if (!isResizing) return;
+        isResizing = false;
+        widget.classList.remove('resizing');
+        widgetsContainer.classList.remove('show-grid');
+
+        document.removeEventListener('mousemove', handleResizeMove);
+        document.removeEventListener('mouseup', handleResizeEnd);
+
+        // Save size
+        saveWidgetSize(widgetId, {
+          size: widget.dataset.size || 'medium'
+        });
+      }
+    }
+  });
+}
+
+/**
+ * Update widget size indicator
+ */
+function updateSizeIndicator(widget) {
+  const sizeIndicator = widget.querySelector('.widget-size-indicator');
+  if (!sizeIndicator) return;
+
+  const size = widget.dataset.size || 'medium';
+  const sizeLabels = {
+    small: 'Small (2 cols)',
+    medium: 'Medium (4 cols)',
+    large: 'Large (6 cols)',
+    xlarge: 'X-Large (8 cols)'
+  };
+
+  sizeIndicator.textContent = sizeLabels[size] || 'Medium';
+}
+
+/**
+ * Save widget position to localStorage
+ */
+function saveWidgetPosition(widgetId, position) {
+  const positions = JSON.parse(localStorage.getItem('widget-positions') || '{}');
+  positions[widgetId] = { ...positions[widgetId], ...position };
+  localStorage.setItem('widget-positions', JSON.stringify(positions));
+}
+
+/**
+ * Save widget size to localStorage
+ */
+function saveWidgetSize(widgetId, sizeData) {
+  const positions = JSON.parse(localStorage.getItem('widget-positions') || '{}');
+  positions[widgetId] = { ...positions[widgetId], ...sizeData };
+  localStorage.setItem('widget-positions', JSON.stringify(positions));
+}
+
+/**
+ * Load widget positions and sizes from localStorage
+ */
+function loadWidgetPositions() {
+  const positions = JSON.parse(localStorage.getItem('widget-positions') || '{}');
+
+  Object.keys(positions).forEach(widgetId => {
+    const widget = document.querySelector(`[data-widget-id="${widgetId}"]`);
+    if (!widget) return;
+
+    const pos = positions[widgetId];
+
+    // Set size preset
+    if (pos.size) {
+      widget.dataset.size = pos.size;
+    }
+
+    // Set position
+    if (pos.position) widget.style.position = pos.position;
+    if (pos.left) widget.style.left = pos.left;
+    if (pos.top) widget.style.top = pos.top;
+
+    // Legacy support for old width/height (convert to size preset)
+    if (pos.width && !pos.size) {
+      const width = parseInt(pos.width);
+      if (width < 250) {
+        widget.dataset.size = 'small';
+      } else if (width < 450) {
+        widget.dataset.size = 'medium';
+      } else if (width < 650) {
+        widget.dataset.size = 'large';
+      } else {
+        widget.dataset.size = 'xlarge';
+      }
+    }
+
+    if (pos.position === 'absolute') widget.style.margin = '0';
+
+    // Update size indicator
+    updateSizeIndicator(widget);
+  });
 }
 
 // Initialize on page load

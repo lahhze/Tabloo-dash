@@ -765,6 +765,7 @@ async function loadWidgetSettings() {
     // Update toggles
     const timeToggle = document.getElementById('timeWidgetToggle');
     const weatherToggle = document.getElementById('weatherWidgetToggle');
+    const appHealthToggle = document.getElementById('appHealthWidgetToggle');
 
     if (timeToggle) {
       timeToggle.checked = settings.timeWidgetEnabled === true || settings.timeWidgetEnabled === 'true';
@@ -773,6 +774,21 @@ async function loadWidgetSettings() {
     if (weatherToggle) {
       weatherToggle.checked = settings.weatherWidgetEnabled === true || settings.weatherWidgetEnabled === 'true';
     }
+
+    if (appHealthToggle) {
+      appHealthToggle.checked = settings.appHealthWidgetEnabled === true || settings.appHealthWidgetEnabled === 'true';
+    }
+
+    // Set temperature unit
+    const tempUnit = settings.weatherTempUnit || 'fahrenheit';
+    if (tempUnit === 'celsius') {
+      document.getElementById('tempUnitC').checked = true;
+    } else {
+      document.getElementById('tempUnitF').checked = true;
+    }
+
+    // Set app health interval inputs
+    setAppHealthIntervalInputs(settings.appHealthCheckInterval);
 
     // Show current weather location if set
     if (settings.weatherLocation && settings.weatherLat && settings.weatherLon) {
@@ -929,6 +945,10 @@ async function saveWidgetSettings() {
   try {
     const timeEnabled = document.getElementById('timeWidgetToggle').checked;
     const weatherEnabled = document.getElementById('weatherWidgetToggle').checked;
+    const appHealthEnabled = document.getElementById('appHealthWidgetToggle').checked;
+
+    // Get temperature unit selection
+    const tempUnit = document.getElementById('tempUnitC').checked ? 'celsius' : 'fahrenheit';
 
     const currentLocationName = document.getElementById('currentLocationName').textContent;
     const currentLocationCoords = document.getElementById('currentLocationCoords').textContent;
@@ -944,12 +964,19 @@ async function saveWidgetSettings() {
       weatherLon = coords[1];
     }
 
+    const intervalValue = parseInt(document.getElementById('appHealthIntervalValue').value, 10);
+    const intervalUnit = document.getElementById('appHealthIntervalUnit').value;
+    const intervalMs = convertIntervalToMs(intervalValue, intervalUnit);
+
     const settings = {
       timeWidgetEnabled: timeEnabled,
       weatherWidgetEnabled: weatherEnabled,
+      weatherTempUnit: tempUnit,
       weatherLocation,
       weatherLat,
-      weatherLon
+      weatherLon,
+      appHealthWidgetEnabled: appHealthEnabled,
+      appHealthCheckInterval: intervalMs
     };
 
     const response = await fetch('/api/settings', {
@@ -965,6 +992,54 @@ async function saveWidgetSettings() {
     console.error('Error saving widget settings:', error);
     showToast('Failed to save widget settings', 'error');
   }
+}
+
+/**
+ * Populate the interval inputs for the app health widget
+ */
+function setAppHealthIntervalInputs(rawInterval) {
+  const valueInput = document.getElementById('appHealthIntervalValue');
+  const unitSelect = document.getElementById('appHealthIntervalUnit');
+  if (!valueInput || !unitSelect) return;
+
+  const intervalMs = parseInt(rawInterval, 10) || 60000;
+  const { value, unit } = deriveIntervalParts(intervalMs);
+  valueInput.value = value;
+  unitSelect.value = unit;
+}
+
+/**
+ * Convert interval milliseconds into value/unit parts for the UI
+ */
+function deriveIntervalParts(intervalMs) {
+  if (intervalMs % 3600000 === 0) {
+    return { value: intervalMs / 3600000, unit: 'hours' };
+  }
+
+  if (intervalMs % 60000 === 0) {
+    return { value: intervalMs / 60000, unit: 'minutes' };
+  }
+
+  return {
+    value: Math.max(5, Math.round(intervalMs / 1000)),
+    unit: 'seconds'
+  };
+}
+
+/**
+ * Normalize UI input into milliseconds (minimum 5 seconds)
+ */
+function convertIntervalToMs(value, unit) {
+  const multipliers = {
+    seconds: 1000,
+    minutes: 60000,
+    hours: 3600000
+  };
+
+  const sanitizedValue = Number.isFinite(value) ? value : 0;
+  const clampedValue = Math.max(5, sanitizedValue);
+
+  return clampedValue * (multipliers[unit] || 1000);
 }
 
 /**

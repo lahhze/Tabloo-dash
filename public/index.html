@@ -98,110 +98,36 @@
         </button>
       </div>
 
-      <!-- Top Control Bar -->
-      <div class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/95 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/80">
-        <!-- Top Menu Toggle Button -->
-        <button id="topMenuToggle" class="top-menu-toggle" title="Toggle Controls" aria-label="Toggle Top Menu">
-          <svg class="top-menu-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      <!-- View Mode & Theme Toggle Buttons (Top Right) -->
+      <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <!-- View Mode Buttons -->
+        <div class="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-950/60 backdrop-blur-xl p-1">
+          <button data-view="grid" class="view-btn w-10 h-10 rounded-lg transition-colors" title="Grid View">
+            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+          </button>
+          <button data-view="list" class="view-btn w-10 h-10 rounded-lg transition-colors" title="List View">
+            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+          <button data-view="compact" class="view-btn w-10 h-10 rounded-lg transition-colors" title="Compact View">
+            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggle" class="theme-toggle-btn w-12 h-12" title="Toggle Theme" aria-label="Toggle Dark/Light Mode">
+          <svg id="sunIcon" class="theme-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+          <svg id="moonIcon" class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
           </svg>
         </button>
-
-        <div class="mx-auto w-full max-w-7xl px-6">
-          <!-- Title Row -->
-          <div class="py-4 flex items-center justify-between border-b border-slate-800/50">
-            <div class="flex items-center gap-4">
-              <div class="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/70 px-3 py-1 text-xs font-medium text-slate-400">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                Home-Lab
-              </div>
-              <h1 class="text-xl font-semibold text-white">Dashboard</h1>
-            </div>
-            <div class="flex items-center gap-2">
-              <button id="topQuickAdd" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-sky-500 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-500/30 hover:from-sky-400 hover:to-indigo-500 transition-all">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Quick Add
-              </button>
-              <button id="themeToggle" class="theme-toggle" title="Toggle theme">
-                <svg id="sunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
-                <svg id="moonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                </svg>
-              </button>
-              <a href="/admin" class="inline-flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900/80 transition-colors">
-                <svg class="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Admin
-              </a>
-            </div>
-          </div>
-
-          <!-- Controls Row -->
-          <div class="top-controls collapsed py-3 flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
-            <!-- Search -->
-            <div class="relative flex-1 max-w-md">
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Search apps..."
-                class="w-full rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-2 pl-10 text-sm transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500/60"
-              >
-              <svg class="absolute left-3 top-2.5 h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-            </div>
-
-            <!-- Filters -->
-            <div class="flex items-center gap-2 flex-wrap lg:flex-nowrap">
-              <select id="sectionFilter" class="rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500/60">
-                <option value="">All Sections</option>
-              </select>
-              <select id="tagFilter" class="rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500/60">
-                <option value="">All Tags</option>
-              </select>
-              <select id="sortSelect" class="rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm transition focus:border-sky-500 focus:ring-1 focus:ring-sky-500/60">
-                <option value="pinned">Pinned First</option>
-                <option value="name">Name (A-Z)</option>
-                <option value="date">Date Added</option>
-                <option value="tag">Tag</option>
-              </select>
-            </div>
-
-            <!-- View Mode Buttons -->
-            <div class="inline-flex rounded-lg border border-slate-800 bg-slate-950/60 p-0.5">
-              <button class="view-btn active inline-flex h-8 w-8 items-center justify-center rounded-md transition" data-view="grid" title="Grid View">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                </svg>
-              </button>
-              <button class="view-btn inline-flex h-8 w-8 items-center justify-center rounded-md transition" data-view="comfortable" title="Comfortable View">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
-                </svg>
-              </button>
-              <button class="view-btn inline-flex h-8 w-8 items-center justify-center rounded-md transition" data-view="compact" title="Compact Grid">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 3h4v4H3V3zm0 5h4v4H3V8zm0 5h4v4H3v-4zm5-10h4v4H8V3zm0 5h4v4H8V8zm0 5h4v4H8v-4zm5-10h4v4h-4V3zm0 5h4v4h-4V8zm0 5h4v4h-4v-4z"></path>
-                </svg>
-              </button>
-              <button class="view-btn inline-flex h-8 w-8 items-center justify-center rounded-md transition" data-view="list" title="List View">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                </svg>
-              </button>
-              <button class="view-btn inline-flex h-8 w-8 items-center justify-center rounded-md transition" data-view="table" title="Table View">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Main -->
@@ -211,7 +137,32 @@
           <!-- Dashboard Widgets -->
           <div id="dashboardWidgets" class="dashboard-widgets hidden">
             <!-- Time Widget -->
-            <div id="timeWidget" class="widget time-widget hidden">
+            <div id="timeWidget" class="widget time-widget hidden" data-widget-id="time">
+              <div class="widget-drag-handle corner-top-left" data-drag-corner="top-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-top-right" data-drag-corner="top-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-left" data-drag-corner="bottom-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-right" data-drag-corner="bottom-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-resize-handle" title="Drag to resize">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                </svg>
+              </div>
               <div class="flex items-center justify-between mb-4">
                 <svg class="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -222,7 +173,32 @@
             </div>
 
             <!-- Weather Widget -->
-            <div id="weatherWidget" class="widget weather-widget hidden">
+            <div id="weatherWidget" class="widget weather-widget hidden" data-widget-id="weather">
+              <div class="widget-drag-handle corner-top-left" data-drag-corner="top-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-top-right" data-drag-corner="top-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-left" data-drag-corner="bottom-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-right" data-drag-corner="bottom-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-resize-handle" title="Drag to resize">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                </svg>
+              </div>
               <div class="flex items-center justify-between">
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-2">
@@ -235,6 +211,126 @@
                   <div class="weather-location" id="weatherLocation">--</div>
                 </div>
                 <img id="weatherIcon" class="weather-icon" alt="Weather icon" style="display: none;">
+              </div>
+            </div>
+
+            <!-- Speedtest Widget -->
+            <div id="speedtestWidget" class="widget speedtest-widget hidden" data-widget-id="speedtest">
+              <div class="widget-drag-handle corner-top-left" data-drag-corner="top-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-top-right" data-drag-corner="top-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-left" data-drag-corner="bottom-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-right" data-drag-corner="bottom-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-resize-handle" title="Drag to resize">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                </svg>
+              </div>
+              <div class="flex items-center gap-3 mb-4">
+                <svg class="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <h3 class="text-lg font-semibold text-white">Speed Test</h3>
+              </div>
+              <div id="speedtestContent" class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400">Download</span>
+                  </div>
+                  <span class="speedtest-value" id="speedtestDownload">--</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400">Upload</span>
+                  </div>
+                  <span class="speedtest-value" id="speedtestUpload">--</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm text-slate-400">Ping</span>
+                  </div>
+                  <span class="speedtest-value" id="speedtestPing">--</span>
+                </div>
+                <div class="pt-2 border-t border-slate-700">
+                  <button id="runSpeedtestBtn" class="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 rounded-lg text-sm font-medium text-white transition-colors shadow-lg shadow-purple-500/30">
+                    <span class="flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                      </svg>
+                      Run Test
+                    </span>
+                  </button>
+                </div>
+                <div class="text-xs text-slate-500 text-center" id="speedtestLastRun">Never tested</div>
+              </div>
+            </div>
+
+            <!-- App Health Widget -->
+            <div id="appHealthWidget" class="widget app-health-widget hidden" data-widget-id="appHealth">
+              <div class="widget-drag-handle corner-top-left" data-drag-corner="top-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-top-right" data-drag-corner="top-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-left" data-drag-corner="bottom-left" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-drag-handle corner-bottom-right" data-drag-corner="bottom-right" title="Drag to move">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </div>
+              <div class="widget-resize-handle" title="Drag to resize">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                </svg>
+              </div>
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <p class="text-sm uppercase tracking-[0.2em] text-slate-400">App Health</p>
+                  <p id="appHealthSummary" class="text-2xl font-semibold text-white mt-1">Monitoring disabled</p>
+                </div>
+                <button id="appHealthRefreshBtn" class="app-health-refresh" title="Run health check">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                  </svg>
+                  Check Now
+                </button>
+              </div>
+              <p id="appHealthLastChecked" class="text-xs text-slate-400 mb-4">Last checked: never</p>
+              <div id="appHealthStatusList" class="app-health-status-list">
+                <div class="app-health-empty">Enable the widget in Admin settings to begin monitoring.</div>
               </div>
             </div>
           </div>
@@ -353,14 +449,11 @@
     </div>
   </div>
 
+
   <!-- Script -->
   <script>
-    // Wire up all quick add buttons to open the modal
+    // Wire up sidebar quick add button to open the modal
     document.getElementById('sidebarQuickAdd')?.addEventListener('click', () => {
-      document.getElementById('quickAddModal').classList.remove('hidden');
-      document.getElementById('quickAddForm').querySelector('input[name="name"]').focus();
-    });
-    document.getElementById('topQuickAdd')?.addEventListener('click', () => {
       document.getElementById('quickAddModal').classList.remove('hidden');
       document.getElementById('quickAddForm').querySelector('input[name="name"]').focus();
     });

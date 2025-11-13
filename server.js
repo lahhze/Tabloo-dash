@@ -127,6 +127,28 @@ function initializeDatabase() {
     console.log('Default settings initialized');
   }
 
+  // Ensure newer settings exist for upgrades
+  const ensureSetting = db.prepare(`
+    INSERT INTO settings (key, value)
+    VALUES (?, ?)
+    ON CONFLICT(key) DO NOTHING
+  `);
+
+  const defaultSettings = [
+    ['timeWidgetEnabled', 'false'],
+    ['weatherWidgetEnabled', 'false'],
+    ['weatherLocation', ''],
+    ['weatherLat', ''],
+    ['weatherLon', ''],
+    ['weatherTempUnit', 'fahrenheit'],
+    ['appHealthWidgetEnabled', 'false'],
+    ['appHealthCheckInterval', '60000']
+  ];
+
+  defaultSettings.forEach(([key, value]) => {
+    ensureSetting.run(key, value);
+  });
+
   console.log('Database tables created/verified');
 
   // Check if we need to add example apps
@@ -188,9 +210,11 @@ app.locals.db = db;
 
 // API Routes
 const appsRouter = require('./routes/apps');
+const appHealthRouter = require('./routes/appHealth');
 const uploadsRouter = require('./routes/uploads');
 const settingsRouter = require('./routes/settings');
 
+app.use('/api/apps/health', appHealthRouter);
 app.use('/api/apps', appsRouter);
 app.use('/api/uploads', uploadsRouter);
 app.use('/api/settings', settingsRouter);
